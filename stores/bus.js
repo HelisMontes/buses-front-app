@@ -4,6 +4,47 @@ import { defineStore } from 'pinia'
 export const useBusStore = defineStore(
     'bus-store',
     () => {
+        const COLUMNS = [
+            {
+                label: 'N°',
+                field: 'id',
+            },
+            {
+                label: 'Placa',
+                field: 'plate',
+            },
+            {
+                label: 'Color',
+                field: 'color',
+            },
+            {
+                label: 'Marca',
+                field: 'brand',
+            },
+            {
+                label: 'Modelo',
+                field: 'model',
+            },
+            {
+                label: 'Serial',
+                field: 'serial',
+            },
+            {
+                label: 'Año',
+                field: 'year',
+            },
+            {
+                label: 'Imagen',
+                field: 'image',
+                type: 'callback',
+            },
+            {
+                label: 'Activo',
+                field: 'status',
+                type: 'callback',
+            },
+        ]
+
         const list = reactive({
             isLoading: false,
             data: [],
@@ -58,6 +99,7 @@ export const useBusStore = defineStore(
         }
 
         return {
+            COLUMNS,
             list,
             getAll,
             updatePerPage,
