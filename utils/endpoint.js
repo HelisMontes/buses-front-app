@@ -2,11 +2,9 @@ const API_BASE_URL = process.env.NUXT_API_BASE_URL || 'http://localhost:3000'
 
 
 export default {
-    get: async (url, params = {}) => {
+    get: async (url, params) => {
         try {
-            return await $fetch(
-                API_BASE_URL + url + '?'  + new URLSearchParams(params),
-            )
+            return await $fetch(API_BASE_URL + url + (params ? '?' + new URLSearchParams(params) : ''))
         }catch({data, message}){
             return {data, message}
         }
