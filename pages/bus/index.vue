@@ -1,63 +1,69 @@
 <template>
   <h1>Bus page</h1>
-  <button @click="$emit('increment')">Increment</button>
-  <span>
-    {{ counter }}
-  </span>
-
+  <br />
+  <br />
+  <TableCustom :data="list.data || []" :meta="list.meta || {}" @update-data="getAll" @update-per-page="updatePerPage" @update-page="updatePage" :columns="[
+    {
+      label: 'N°',
+      field: 'id',
+    },
+    {
+      label: 'Placa',
+      field: 'plate',
+    },
+    {
+      label: 'Color',
+      field: 'color',
+    },
+    {
+      label: 'Marca',
+      field: 'brand',
+    },
+    {
+      label: 'Modelo',
+      field: 'model',
+    },
+    {
+      label: 'Serial',
+      field: 'serial',
+    },
+    {
+      label: 'Año',
+      field: 'year',
+    },
+    {
+      label: 'Activo',
+      field: 'status',
+      type: 'callback',
+    },
+    {
+      label: 'Creado en',
+      field: 'created_at',
+    },
+    {
+      label: 'Actualizado en',
+      field: 'updated_at',
+    },
+  ]">
+    <template v-slot:callback="{ dataRow }">
+      {{ dataRow.status ? 'Si' : 'No' }}
+    </template>
+  </TableCustom>
 </template>
 
 <script setup>
-import useCounterStore from '@/stores/counter.js'
+import { storeToRefs } from 'pinia'
+import { useBusStore } from '@/stores/bus'
 
+import TableCustom from '~/components/TableCustom.vue'
 
-const incrementStore = () => {
-  const { state, dispatch } = useCounterStore()
-  return {
-    counter: state.counter,
-    increment: () => dispatch('increment')
-  }
-}
-// const useStore = () => {
-//   const { state, actions } = useCounterStore()
-//   return {
-//     state,
-//     actions
-//   }
-// }
+const busStore = useBusStore()
+const { list } = storeToRefs(busStore)
+
+const { getAll, updatePerPage, updatePage } = busStore
 
 onMounted(async () => {
-
-  const resultPost = await $fetch('/api/bus/create',
-    {
-      method: 'post',
-      body: {
-        brand: 'mazda',
-        color: 'rojo',
-        model: '5',
-        plate: 'a2',
-        quantity_seats: '10',
-        year: '2019',
-      },
-    },
-  )
-  console.log('resultPost', resultPost)
-
-  // const resultPost = await $fetch(
-  //   '/api/bus',
-  //   {
-  //     method: 'post',
-  //     body: {
-  //       brand: 'mazda',
-  //       color: 'rojo',
-  //       model: '5',
-  //       plate: 'a1111',
-  //       quantity_seats: '10',
-  //       year: '2019',
-  //     },
-  //   },
-  // )
-  // console.log('resultPost', resultPost)
+  getAll()
 })
 
 </script>
