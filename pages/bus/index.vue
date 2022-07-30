@@ -114,6 +114,30 @@ const formItems = reactive([
     component: 'FormInputText',
     isValid: true,
   },
+  {
+    label: 'Cantidad de asientos',
+    field: 'quantity_seats',
+    validations: [
+      { required: true, message: 'Este campo es requerido' },
+      { min: 1, message: 'Mínimo 1' },
+      { max: 10, message: 'Máximo 10' },
+    ],
+    value: '',
+    component: 'FormInputNumeric',
+    isValid: true,
+  },
+  {
+    label: 'Año',
+    field: 'year',
+    validations: [
+      { required: true, message: 'Este campo es requerido' },
+      { min: 1950, message: 'Mínimo 1950' },
+      { max: 2050, message: 'Máximo 2050' },
+    ],
+    value: '',
+    component: 'FormInputNumeric',
+    isValid: true,
+  },
 ])
 
 onMounted(() => {
