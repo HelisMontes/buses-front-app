@@ -1,0 +1,28 @@
+const API_BASE_URL = process.env.NUXT_API_BASE_URL || 'http://localhost:3000'
+
+
+export default {
+    get: async (url, params = {}) => {
+        try {
+            return await $fetch(
+                API_BASE_URL + url + '?'  + new URLSearchParams(params),
+            )
+        }catch({data, message}){
+            return {data, message}
+        }
+    },
+    post: async (url, body = {}) => {
+        const API_BASE_URL = process.env.NUXT_API_BASE_URL || 'http://localhost:3000'
+        try {
+            return await $fetch(
+                API_BASE_URL + url,
+                {
+                    method: 'POST',
+                    body: JSON.stringify(body),
+                },
+            )
+        }catch({data, message}){
+            return data
+        }
+    },
+}
