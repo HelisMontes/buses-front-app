@@ -26,43 +26,95 @@
       </template>
     </template>
   </TableCustom>
-  <!-- <Form>
-    <FormItem label="Nombre">
-      <Input v-model="form.name" />
-    </FormItem>
-    <FormItem label="Apellido">
-      <Input v-model="form.lastname" />
-    </FormItem>
-    <FormItem label="Email">
-      <Input v-model="form.email" />
-    </FormItem>
-    <FormItem label="Telefono">
-      <Input v-model="form.phone" />
-    </FormItem>
-    <FormItem label="Direccion">
-      <Input v-model="form.address" />
-    </FormItem>
-    <FormItem label="Estado">
-      <Switch v-model="form.status" />
-    </FormItem>
-    <FormItem>
-      <Button type="primary" @click="create">Crear</Button>
-    </FormItem>
-  </Form> -->
+  <Form>
+    <template
+      v-for="(item, index) in formItems"
+      :key="index"
+    > 
+      <component :is="callComponent[item.component](item)" @update="($event) => { item.value = $event.value; item.isValid = $event.isValid}" />
+    </template>
+  </Form>
+  {{ formItems }}
 </template>
 
 <script setup>
 import { storeToRefs } from 'pinia'
 import { useBusStore } from '@/stores/bus'
 
+import callComponent from '@/utils/callComponent'
+
 import TableCustom from '~/components/TableCustom.vue'
 import Image from '~/components/Image.vue'
+import Form from '~/components/Form.vue'
 
 const busStore = useBusStore()
 const { COLUMNS } = busStore
 const { list } = storeToRefs(busStore)
 
 const { getAll, updatePerPage, updatePage } = busStore
+
+const formItems = reactive([
+  {
+    label: 'Marca',
+    field: 'brand',
+    validations: [
+      { required: true, message: 'Este campo es requerido' },
+      { min: 3, message: 'Mínimo 3 caracteres' },
+      { max: 20, message: 'Máximo 20 caracteres' }
+    ],
+    value: '',
+    component: 'FormInputText',
+    isValid: true,
+  },
+  {
+    label: 'Modelo',
+    field: 'model',
+    validations: [
+      { required: true, message: 'Este campo es requerido' },
+      { min: 3, message: 'Mínimo 3 caracteres' },
+      { max: 20, message: 'Máximo 20 caracteres' }
+    ],
+    value: '',
+    component: 'FormInputText',
+    isValid: true,
+  },
+  {
+    label: 'Color',
+    field: 'color',
+    validations: [
+      { required: true, message: 'Este campo es requerido' },
+      { min: 3, message: 'Mínimo 3 caracteres' },
+      { max: 20, message: 'Máximo 20 caracteres' }
+    ],
+    value: '',
+    component: 'FormInputText',
+    isValid: true,
+  },
+  {
+    label: 'Placa',
+    field: 'plate',
+    validations: [
+      { required: true, message: 'Este campo es requerido' },
+      { min: 3, message: 'Mínimo 3 caracteres' },
+      { max: 20, message: 'Máximo 20 caracteres' }
+    ],
+    value: '',
+    component: 'FormInputText',
+    isValid: true,
+  },
+  {
+    label: 'Placa',
+    field: 'plate',
+    validations: [
+      { required: true, message: 'Este campo es requerido' },
+      { min: 3, message: 'Mínimo 3 caracteres' },
+      { max: 20, message: 'Máximo 20 caracteres' }
+    ],
+    value: '',
+    component: 'FormInputText',
+    isValid: true,
+  },
+])
 
 onMounted(() => {
   getAll()

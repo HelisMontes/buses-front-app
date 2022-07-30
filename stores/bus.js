@@ -39,7 +39,7 @@ export const useBusStore = defineStore(
                 type: 'callback',
             },
             {
-                label: 'Activo',
+                label: 'Estado',
                 field: 'status',
                 type: 'callback',
             },
