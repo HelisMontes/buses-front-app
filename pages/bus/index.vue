@@ -3,6 +3,7 @@
   <br />
   <br />
   <TableCustom
+    v-if="false"
     :data="list.data || []"
     :meta="list.meta || {}"
     :columns="COLUMNS"
@@ -30,11 +31,20 @@
     <template
       v-for="(item, index) in formItems"
       :key="index"
-    > 
+    >
+      <br/>
+      <br/>
       <component :is="callComponent[item.component](item)" @update="($event) => { item.value = $event.value; item.isValid = $event.isValid}" />
     </template>
   </Form>
-  {{ formItems }}
+  <br/>
+  <br/>
+  <br/>
+  <pre>
+    <code>
+      {{ formItems }}
+    </code>
+  </pre>
 </template>
 
 <script setup>
@@ -54,6 +64,17 @@ const { list } = storeToRefs(busStore)
 const { getAll, updatePerPage, updatePage } = busStore
 
 const formItems = reactive([
+  {
+    label: 'Imagen',
+    field: 'image',
+    validations: [
+      { required: true, message: 'Este campo es requerido' },
+      { type: ['webp', 'jpeg', 'jpg', 'png'], message: 'El archivo debe ser una imagen (webp, jpeg, jpg, png)' },
+    ],
+    value: '',
+    component: 'FormInputFile',
+    isValid: true,
+  },
   {
     label: 'Marca',
     field: 'brand',
