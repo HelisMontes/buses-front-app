@@ -65,6 +65,16 @@ const { getAll, updatePerPage, updatePage } = busStore
 
 const formItems = reactive([
   {
+    label: 'Estado',
+    field: 'status',
+    validations: [
+      { required: true, message: 'Este campo es requerido' },
+    ],
+    value: 'indeterminate',
+    component: 'FormInputCheckbox',
+    isValid: false,
+  },
+  {
     label: 'Imagen',
     field: 'image',
     validations: [

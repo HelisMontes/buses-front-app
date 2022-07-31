@@ -85,7 +85,6 @@ const getBase64 = file => new Promise((resolve, reject) => {
 
 const updateValue = (e) => {
   getBase64(e.target.files[0]).then(base64 => {
-    console.log('base64', base64)
     modelValue.value = base64
     isValidRef.value = errors.value.length === 0
     emit('update', {
