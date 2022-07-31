@@ -2,21 +2,14 @@
   {{ label }}
   <input
     type="text"
-    v-model="modelValue"
-    @input="updateValue"
+    :value="forms[store].structure[field].value"
+    @keyup="updateValue($event.target.value)"
   />
   <template
-    v-if="errors.length && validated"
+    v-if="forms[store].structure[field].errors.length && forms[store].isValidated"
   >
     <div>
-      {{ errors }}
-    </div>
-  </template>
-  <template
-    v-if="props.errors.length"
-  >
-    <div>
-      {{ props.errors }}
+      {{ forms[store].structure[field].errors }}
     </div>
   </template>
 </template>
@@ -24,10 +17,21 @@
 <script setup>
 import { computed } from 'vue'
 
-const emit = defineEmits(['update'])
+import { storeToRefs } from 'pinia'
 
-const props = defineProps({
-  label: {
+import { useFormConfigStore } from '@/stores/formConfig'
+
+const formConfigStore = useFormConfigStore()
+const { forms } = storeToRefs(formConfigStore)
+const { setValue, setErrors } = formConfigStore
+
+const { label } = forms.value[store].structure[field]
+
+const {
+  store,
+  field,
+} = defineProps({
+  store: {
     type: String,
     required: true,
   },
@@ -35,64 +39,28 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  validations: {
-    type: Array,
-    default: () => [],
-  },
-  errors: {
-    type: Array,
-    default: () => [],
-  },
-  value: {
-    type: String,
-    required: true,
-  },
-  isValid: {
-    type: Boolean,
-    default: true,
-  },
 })
 
-
-const {
-  label,
-  field,
-  validations,
-  isValid,
-} = props
-
-console.log('props.value', props.value)
-
-const modelValue = ref(props.value)
-const modelErrors = ref(props.errors)
-
 const errors = computed(() => {
+  const { validations, value } = forms.value[store].structure[field]
   return validations.filter(validation => {
     const { required, min, max } = validation
-    if (required && !modelValue.value) {
+    if (required && !value) {
       return true
     }
-    if (min && modelValue.value.length < min) {
+    if (min && value.length < min) {
       return true
     }
-    if (max && modelValue.value.length > max) {
+    if (max && value.length > max) {
       return true
     }
     return false
   }).map(validation => validation.message)
 })
 
-const validated = ref(false)
-
-const updateValue = (e) => {
-  modelValue.value = e.target.value
-  modelErrors.value = errors.value
-  validated.value = true
-  emit('update', {
-    value: modelValue,
-    errors: modelErrors,
-    isValid: errors.value.length === 0,
-  })
+const updateValue = (value) => {
+  setValue(store, field, value)
+  setErrors(store, field, errors.value)
 }
 
 </script>

@@ -6,7 +6,6 @@ import FormInputCheckbox from '~/components/FormInputCheckbox.vue'
 
 export default {
   'FormInputText': (props) => {
-    console.log('FormInputText', props)
     delete props.component
     return h(FormInputText, props, '')
   },

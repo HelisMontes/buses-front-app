@@ -2,14 +2,14 @@
   {{ label }}
   <input
     type="number"
-    v-model="modelValue"
-    @input="updateValue"
+    :value="forms[store].structure[field].value"
+    @keyup="updateValue($event.target.value)"
   />
   <template
-    v-if="errors.length && validated"
+    v-if="forms[store].structure[field].errors.length && forms[store].isValidated"
   >
     <div>
-      {{ errors }}
+      {{ forms[store].structure[field].errors }}
     </div>
   </template>
 </template>
@@ -17,16 +17,21 @@
 <script setup>
 import { computed } from 'vue'
 
-const emit = defineEmits(['update'])
+import { storeToRefs } from 'pinia'
+
+import { useFormConfigStore } from '@/stores/formConfig'
+
+const formConfigStore = useFormConfigStore()
+const { forms } = storeToRefs(formConfigStore)
+const { setValue, setErrors } = formConfigStore
+
+const { label } = forms.value[store].structure[field]
 
 const {
-  label,
+  store,
   field,
-  validations,
-  value,
-  isValid,
 } = defineProps({
-  label: {
+  store: {
     type: String,
     required: true,
   },
@@ -34,48 +39,28 @@ const {
     type: String,
     required: true,
   },
-  validations: {
-    type: Array,
-    default: () => [],
-  },
-  value: {
-    type: String,
-    default: '',
-  },
-  isValid: {
-    type: Boolean,
-    default: true,
-  },
 })
 
-const modelValue = ref(value)
-
 const errors = computed(() => {
+  const { validations, value } = forms.value[store].structure[field]
   return validations.filter(validation => {
     const { required, min, max } = validation
-    if (required && !modelValue.value) {
+    if (required && !value) {
       return true
     }
-    if (min && modelValue.value < min) {
+    if (min && value < min) {
       return true
     }
-    if (max && modelValue.value > max) {
+    if (max && value > max) {
       return true
     }
     return false
   }).map(validation => validation.message)
 })
 
-const validated = ref(false)
-
-const updateValue = (e) => {
-  modelValue.value = parseFloat(e.target.value)
-  validated.value = true
-  emit('update', {
-    value: modelValue,
-    errors,
-    isValid: errors.value.length === 0,
-  })
+const updateValue = (value) => {
+  setValue(store, field, parseFloat(value))
+  setErrors(store, field, errors.value)
 }
 
 </script>

@@ -2,13 +2,14 @@
   {{ label }}
   <input
     type="file"
+    :value="forms[store].structure[field].value"
     @input="updateValue"
   />
   <template
-    v-if="errors.length && validated"
+    v-if="forms[store].structure[field].errors.length && forms[store].isValidated"
   >
     <div>
-      {{ errors }}
+      {{ forms[store].structure[field].errors }}
     </div>
   </template>
 </template>
@@ -16,16 +17,21 @@
 <script setup>
 import { computed } from 'vue'
 
-const emit = defineEmits(['update'])
+import { storeToRefs } from 'pinia'
+
+import { useFormConfigStore } from '@/stores/formConfig'
+
+const formConfigStore = useFormConfigStore()
+const { forms } = storeToRefs(formConfigStore)
+const { setValue, setErrors } = formConfigStore
+
+const { label } = forms.value[store].structure[field]
 
 const {
-  label,
+  store,
   field,
-  validations,
-  value,
-  isValid,
 } = defineProps({
-  label: {
+  store: {
     type: String,
     required: true,
   },
@@ -33,46 +39,19 @@ const {
     type: String,
     required: true,
   },
-  validations: {
-    type: Array,
-    default: () => [],
-  },
-  value: {
-    type: String,
-    default: '',
-  },
-  isValid: {
-    type: Boolean,
-    default: true,
-  },
 })
 
-const modelValue = ref(value)
-
-const validateBase64 = (typeToValidate) => {
-  if(!modelValue.value) return true
-  const isValid = modelValue.value.startsWith('data:image/')
+const validateBase64 = (typeToValidate, value) => {
+  if(!value) return true
+  const isValid = value.startsWith('data:image/')
   if (!isValid) {
     return false
   }
-  const [type,] = modelValue.value.split(';')
+  const [type,] = value.split(';')
   const [, extension] = type.split('/')
   const isValidExtension = typeToValidate.includes(extension)
   return isValidExtension
 }
-
-const errors = computed(() => {
-  return validations.filter(validation => {
-    const { required, type } = validation
-    if (required && !modelValue.value) {
-      return true
-    }
-    if (type && !validateBase64(type)) {
-      return true
-    }
-    return false
-  }).map(validation => validation.message)
-})
 
 const getBase64 = file => new Promise((resolve, reject) => {
   const reader = new FileReader()
@@ -81,17 +60,25 @@ const getBase64 = file => new Promise((resolve, reject) => {
   reader.onerror = error => reject(error)
 })
 
-
-const validated = ref(false)
+const errors = computed(() => {
+  const { validations, value } = forms.value[store].structure[field]
+  return validations.filter(validation => {
+    const { required, type } = validation
+    if (required && !value) {
+      return true
+    }
+    if (type && !validateBase64(type, value)) {
+      return true
+    }
+    return false
+  }).map(validation => validation.message)
+})
 
 const updateValue = (e) => {
-  getBase64(e.target.files[0]).then(base64 => {
-    modelValue.value = base64
-    validated.value = true
-    emit('update', {
-      value: modelValue,
-      isValid: errors.value.length === 0,
-    })
+  const value = e.target.files[0]
+  getBase64(value).then(base64 => {
+    setValue(store, field, base64)
+    setErrors(store, field, errors.value)
   })
 }
 

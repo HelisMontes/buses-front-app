@@ -29,31 +29,20 @@
   </TableCustom>
   {{ createStatus }}
   <Form
+    name="bus"
+
+    :structure="FORM_STRUCTURE"
+
     @submit="submit"
-  >
-    <template
-      v-for="(item, index) in formItems"
-      :key="index"
-    >
-      <br/>
-      <br/>
-      <component
-        :is="callComponent[item.component](item)"
-        @update="($event) => { item.value = $event.value; item.isValid = $event.isValid }"
-      />
-    </template>
-  </Form>
-  {{ formItems }}
-  <br/>
-  <br/>
+
+    ref="form"
+  />
   <br/>
 </template>
 
 <script setup>
 import { storeToRefs } from 'pinia'
 import { useBusStore } from '@/stores/bus'
-
-import callComponent from '@/utils/callComponent'
 
 import TableCustom from '~/components/TableCustom.vue'
 import Image from '~/components/Image.vue'
@@ -65,7 +54,7 @@ const { list, createStatus } = storeToRefs(busStore)
 
 const { getAll, updatePerPage, updatePage, create } = busStore
 
-const formItems = reactive({
+const FORM_STRUCTURE = {
   brand: {
     label: 'Marca',
     validations: [
@@ -74,8 +63,7 @@ const formItems = reactive({
       { max: 20, message: 'Máximo 20 caracteres' }
     ],
     value: '',
-    errors: [],
-    isValid: false,
+    errors: [''],
     component: 'FormInputText',
   },
   model: {
@@ -86,8 +74,7 @@ const formItems = reactive({
       { max: 20, message: 'Máximo 20 caracteres' }
     ],
     value: '',
-    errors: [],
-    isValid: false,
+    errors: [''],
     component: 'FormInputText',
   },
   color: {
@@ -98,8 +85,7 @@ const formItems = reactive({
       { max: 20, message: 'Máximo 20 caracteres' }
     ],
     value: '',
-    errors: [],
-    isValid: false,
+    errors: [''],
     component: 'FormInputText',
   },
   plate: {
@@ -110,8 +96,7 @@ const formItems = reactive({
       { max: 20, message: 'Máximo 20 caracteres' }
     ],
     value: '',
-    errors: [],
-    isValid: false,
+    errors: [''],
     component: 'FormInputText',
   },
   quantity_seats: {
@@ -122,8 +107,7 @@ const formItems = reactive({
       { max: 10, message: 'Máximo 10' },
     ],
     value: '',
-    errors: [],
-    isValid: false,
+    errors: [''],
     component: 'FormInputNumeric',
   },
   year: {
@@ -134,8 +118,7 @@ const formItems = reactive({
       { max: 2050, message: 'Máximo 2050' },
     ],
     value: '',
-    errors: [],
-    isValid: false,
+    errors: [''],
     component: 'FormInputNumeric',
   },
   image: {
@@ -146,7 +129,6 @@ const formItems = reactive({
     ],
     value: '',
     errors: [],
-    isValid: false,
     component: 'FormInputFile',
   },
   status: {
@@ -154,56 +136,20 @@ const formItems = reactive({
     validations: [
       { required: true, message: 'Este campo es requerido' },
     ],
-    value: '',
-    errors: [],
-    isValid: false,
+    value: undefined,
+    errors: [''],
     component: 'FormInputCheckbox',
   },
-})
-
-const formReset = () => {
-  for(const item in formItems) {
-    formItems[item].value = ''
-    formItems[item].isValid = false
-  }
 }
 
-const formIsValid = computed(() => {
-  for (const item of Object.values(formItems)) {
-    if (!item.isValid) {
-      return false
-    }
-  }
-  return true
-})
-const formAllValues = computed(() => {
-  const values = {}
-  for (const item in formItems) {
-    values[item] = formItems[item].value
-  }
-  return values
-})
-
-const setErrors = (errors) => {
-  console.log('errors', errors)
-  for (const item in formItems) {
-    formItems[item].errors.splice(0, formItems[item].errors.length);
-    if(errors[item]) formItems[item].errors.push(...errors[item])
-  }
-}
-
-const submit = async () => {
-  if(!formIsValid.value) {
-    alert('Formulario no válido')
-    return
-  }
+const form = ref();
+const submit = async (values) => {
   try {
-    await create(formAllValues.value)
-    formReset()
-    setErrors({})
+    await create(values)
+    form.value.reset(FORM_STRUCTURE)
     await getAll()
   } catch ({ message }) {
-    setErrors(message)
+    form.value.setErrors(message)
   }
 }
 
