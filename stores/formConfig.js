@@ -34,7 +34,7 @@ export const useFormConfigStore = defineStore(
             const values = {}
             const structure = forms[key].structure
             for (const item in structure) {
-                if (structure[item].value) {
+                if (structure[item]?.value !== undefined && structure[item]?.value !== '') {
                     values[item] = structure[item].value
                 }
             }

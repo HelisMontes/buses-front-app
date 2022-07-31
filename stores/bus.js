@@ -38,10 +38,6 @@ export const useBusStore = defineStore(
                     field: 'model',
                 },
                 {
-                    label: 'Placa',
-                    field: 'plate',
-                },
-                {
                     label: 'Año',
                     field: 'year',
                 },
@@ -139,12 +135,31 @@ export const useBusStore = defineStore(
             })
         }
 
+        async function deleteItem({ id }) {
+            createStatus.isLoading = true
+            createStatus.data = {}
+            createStatus.errors = {}
+            return $fetch('/api/bus/delete', {
+                method: 'POST',
+                body: { id },
+            }).then(({ data, message }) => {
+                createStatus.isLoading = false
+                createStatus.data = data.bus
+                createStatus.errors = {}
+                return message || ''
+            }).catch(({ data }) => {
+                createStatus.isLoading = false
+                return Promise.reject(JSON.parse(data.message))
+            })
+        }
+
         return {
             list,
             getAll,
             updatePerPage,
             updatePage,
             save,
+            delete: deleteItem,
             createStatus,
         }
     },

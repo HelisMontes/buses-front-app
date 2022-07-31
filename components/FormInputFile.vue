@@ -94,6 +94,7 @@ watch(() => forms.value[store].structure[field].value, (currentValue, oldValue) 
   if (oldValue !== currentValue && !currentValue) {
     file.value.type = 'text'
     file.value.type = 'file'
+    setErrors(store, field, errors.value)
   }
 });
 
@@ -105,5 +106,9 @@ const updateValue = (e) => {
     setErrors(store, field, errors.value)
   })
 }
+
+onMounted(() => {
+  setErrors(store, field, errors.value)
+})
 
 </script>

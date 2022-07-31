@@ -26,6 +26,10 @@
           text="Editar"
           @click="edit(row)"
         />
+        <Button
+          text="Eliminar"
+          @click="deleteItem(row)"
+        />
       </template>
       <template v-else>
         {{ data }}
@@ -66,7 +70,7 @@ const FORM_STRUCTURE = {
       { max: 20, message: 'Máximo 20 caracteres' }
     ],
     value: '',
-    errors: [''],
+    errors: [],
     component: 'FormInputText',
   },
   model: {
@@ -77,7 +81,7 @@ const FORM_STRUCTURE = {
       { max: 20, message: 'Máximo 20 caracteres' }
     ],
     value: '',
-    errors: [''],
+    errors: [],
     component: 'FormInputText',
   },
   color: {
@@ -88,7 +92,7 @@ const FORM_STRUCTURE = {
       { max: 20, message: 'Máximo 20 caracteres' }
     ],
     value: '',
-    errors: [''],
+    errors: [],
     component: 'FormInputText',
   },
   plate: {
@@ -99,7 +103,7 @@ const FORM_STRUCTURE = {
       { max: 20, message: 'Máximo 20 caracteres' }
     ],
     value: '',
-    errors: [''],
+    errors: [],
     component: 'FormInputText',
   },
   quantity_seats: {
@@ -110,7 +114,7 @@ const FORM_STRUCTURE = {
       { max: 10, message: 'Máximo 10' },
     ],
     value: '',
-    errors: [''],
+    errors: [],
     component: 'FormInputNumeric',
   },
   year: {
@@ -121,7 +125,7 @@ const FORM_STRUCTURE = {
       { max: 2050, message: 'Máximo 2050' },
     ],
     value: '',
-    errors: [''],
+    errors: [],
     component: 'FormInputNumeric',
   },
   image: {
@@ -140,7 +144,7 @@ const FORM_STRUCTURE = {
       { required: true, message: 'Este campo es requerido' },
     ],
     value: undefined,
-    errors: [''],
+    errors: [],
     component: 'FormInputCheckbox',
   },
 }
@@ -152,11 +156,30 @@ const submit = async (values) => {
     form.value.reset(FORM_STRUCTURE)
     await getAll()
   } catch ({ message }) {
-    form.value.setErrors(message)
+    if (typeof message === 'object' ) {
+      form.value.setErrors(message)
+    }else{
+      message?.bus && alert(message.bus)
+    }
   }
 }
 const edit = async (row) => {
   form.value.setData(row)
+}
+const deleteItem = async (row) => {
+  try {
+    await busStore.delete({
+      id: row.id,
+    })
+    form.value.reset(FORM_STRUCTURE)
+    await getAll()
+  } catch ({ message }) {
+    if (typeof message === 'object' ) {
+      form.value.setErrors(message)
+    }else{
+      message?.bus && alert(message.bus)
+    }
+  }
 }
 
 onMounted(() => {

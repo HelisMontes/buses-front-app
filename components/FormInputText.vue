@@ -62,9 +62,19 @@ const errors = computed(() => {
   }).map(validation => validation.message)
 })
 
+watch(() => forms.value[store].structure[field].value, (currentValue, oldValue) => {
+  if (oldValue !== currentValue && !currentValue) {
+    setErrors(store, field, errors.value)
+  }
+});
+
 const updateValue = (value) => {
   setValue(store, field, value)
   setErrors(store, field, errors.value)
 }
+
+onMounted(() => {
+  setErrors(store, field, errors.value)
+})
 
 </script>
