@@ -7,7 +7,6 @@ export const useFormConfigStore = defineStore(
         const forms = reactive({})
 
         function setForm(key, { structure }) {
-            console.log('setForm', key, structure)
             if(!forms[key]) {
                 forms[key] = {}
             }
@@ -16,37 +15,33 @@ export const useFormConfigStore = defineStore(
         }
 
         function setValue(key, field, value) {
-            console.log('setValue', key, field, value)
             if(!forms[key]) return
             forms[key].structure[field].value = value
         }
 
         function setFormValidated(key, isValidated) {
-            console.log('setFormValidated', key, isValidated)
             if(!forms[key]) return
             forms[key].isValidated = isValidated
         }
 
         function setErrors(key, field, errors) {
-            console.log('setErrors', key, field, errors)
             if(!forms[key]) return
             forms[key].structure[field].errors = errors
         }
 
         function getValues(key) {
-            console.log('getValues', key)
             if(!forms[key]) return
             const values = {}
             const structure = forms[key].structure
             for (const item in structure) {
-                console.log('item', item)
-                values[item] = structure[item].value
+                if (structure[item].value) {
+                    values[item] = structure[item].value
+                }
             }
             return values
         }
 
         function setErrorsList(key, errors) {
-            console.log('setErrorsList', key, errors)
             if(!forms[key]) return
             const structure = forms[key].structure
             for (const item in structure) {
@@ -55,9 +50,28 @@ export const useFormConfigStore = defineStore(
             }
         }
 
+        function setData(key, { data }) {
+            if(!forms[key]) return
+            for (const item in data) {
+                if(item === 'id'){
+                    forms[key].structure[item] = {}
+                    forms[key].structure[item]['value'] = data[item]
+                }else if(forms[key].structure[item]) {
+                    forms[key].structure[item].errors = []
+                    if(forms[key].structure[item].component !== 'FormInputFile') {
+                        forms[key].structure[item].value = data[item]
+                    }else{
+                        forms[key].structure[item].value = ''
+                        forms[key].structure[item].fileOld = data[item]
+                    }
+                }
+            }
+        }
+
         return {
             forms,
             setForm,
+            setData,
             setValue,
             setFormValidated,
             setErrors,

@@ -6,7 +6,11 @@
     @keyup="updateValue($event.target.value)"
   />
   <template
-    v-if="forms[store].structure[field].errors.length && forms[store].isValidated"
+    v-if="
+      forms[store].structure[field].errors.length &&
+      forms[store].structure[field].errors[0] &&
+      forms[store].isValidated
+    "
   >
     <div>
       {{ forms[store].structure[field].errors }}

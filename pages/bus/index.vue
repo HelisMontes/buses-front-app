@@ -3,7 +3,6 @@
   <br />
   <br />
   <TableCustom
-    v-if="false"
     :data="list.data || []"
     :meta="list.meta || {}"
     :columns="COLUMNS"
@@ -11,7 +10,7 @@
     @update-per-page="updatePerPage"
     @update-page="updatePage"
   >
-    <template v-slot:callback="{ data, field }">
+    <template v-slot:callback="{ data, field, row }">
       <template v-if="field === 'status'">
         <span v-if="data">Activo</span>
         <span v-else>Inactivo</span>
@@ -22,12 +21,17 @@
           alt="bus"
         />
       </template>
+      <template v-else-if="field === 'actions'">
+        <Button
+          text="Editar"
+          @click="edit(row)"
+        />
+      </template>
       <template v-else>
         {{ data }}
       </template>
     </template>
   </TableCustom>
-  {{ createStatus }}
   <Form
     name="bus"
 
@@ -49,10 +53,9 @@ import Image from '~/components/Image.vue'
 import Form from '~/components/Form.vue'
 
 const busStore = useBusStore()
-const { COLUMNS } = busStore
 const { list, createStatus } = storeToRefs(busStore)
-
-const { getAll, updatePerPage, updatePage, create } = busStore
+const { getAll, updatePerPage, updatePage, save } = busStore
+const { COLUMNS } = busStore.list
 
 const FORM_STRUCTURE = {
   brand: {
@@ -122,9 +125,9 @@ const FORM_STRUCTURE = {
     component: 'FormInputNumeric',
   },
   image: {
+    type: 'image',
     label: 'Imagen',
     validations: [
-      // { required: true, message: 'Este campo es requerido' },
       { type: ['webp', 'jpeg', 'jpg', 'png'], message: 'El archivo debe ser una imagen (webp, jpeg, jpg, png)' },
     ],
     value: '',
@@ -145,12 +148,15 @@ const FORM_STRUCTURE = {
 const form = ref();
 const submit = async (values) => {
   try {
-    await create(values)
+    await save(values)
     form.value.reset(FORM_STRUCTURE)
     await getAll()
   } catch ({ message }) {
     form.value.setErrors(message)
   }
+}
+const edit = async (row) => {
+  form.value.setData(row)
 }
 
 onMounted(() => {
