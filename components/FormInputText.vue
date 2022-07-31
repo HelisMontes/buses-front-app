@@ -6,10 +6,17 @@
     @input="updateValue"
   />
   <template
-    v-if="errors.length && !isValidRef"
+    v-if="errors.length && validated"
   >
     <div>
       {{ errors }}
+    </div>
+  </template>
+  <template
+    v-if="props.errors.length"
+  >
+    <div>
+      {{ props.errors }}
     </div>
   </template>
 </template>
@@ -19,13 +26,7 @@ import { computed } from 'vue'
 
 const emit = defineEmits(['update'])
 
-const {
-  label,
-  field,
-  validations,
-  value,
-  isValid,
-} = defineProps({
+const props = defineProps({
   label: {
     type: String,
     required: true,
@@ -38,9 +39,13 @@ const {
     type: Array,
     default: () => [],
   },
+  errors: {
+    type: Array,
+    default: () => [],
+  },
   value: {
     type: String,
-    default: '',
+    required: true,
   },
   isValid: {
     type: Boolean,
@@ -48,7 +53,18 @@ const {
   },
 })
 
-const modelValue = ref(value)
+
+const {
+  label,
+  field,
+  validations,
+  isValid,
+} = props
+
+console.log('props.value', props.value)
+
+const modelValue = ref(props.value)
+const modelErrors = ref(props.errors)
 
 const errors = computed(() => {
   return validations.filter(validation => {
@@ -66,13 +82,15 @@ const errors = computed(() => {
   }).map(validation => validation.message)
 })
 
-const isValidRef = ref(isValid)
+const validated = ref(false)
 
 const updateValue = (e) => {
   modelValue.value = e.target.value
-  isValidRef.value = errors.value.length === 0
+  modelErrors.value = errors.value
+  validated.value = true
   emit('update', {
-    value: modelValue.value,
+    value: modelValue,
+    errors: modelErrors,
     isValid: errors.value.length === 0,
   })
 }

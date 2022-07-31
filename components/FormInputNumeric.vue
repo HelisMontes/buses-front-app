@@ -6,7 +6,7 @@
     @input="updateValue"
   />
   <template
-    v-if="errors.length && !isValidRef"
+    v-if="errors.length && validated"
   >
     <div>
       {{ errors }}
@@ -66,13 +66,14 @@ const errors = computed(() => {
   }).map(validation => validation.message)
 })
 
-const isValidRef = ref(isValid)
+const validated = ref(false)
 
 const updateValue = (e) => {
   modelValue.value = parseFloat(e.target.value)
-  isValidRef.value = errors.value.length === 0
+  validated.value = true
   emit('update', {
-    value: modelValue.value,
+    value: modelValue,
+    errors,
     isValid: errors.value.length === 0,
   })
 }

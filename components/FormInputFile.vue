@@ -5,7 +5,7 @@
     @input="updateValue"
   />
   <template
-    v-if="errors.length && !isValidRef"
+    v-if="errors.length && validated"
   >
     <div>
       {{ errors }}
@@ -74,8 +74,6 @@ const errors = computed(() => {
   }).map(validation => validation.message)
 })
 
-const isValidRef = ref(isValid)
-
 const getBase64 = file => new Promise((resolve, reject) => {
   const reader = new FileReader()
   reader.readAsDataURL(file)
@@ -83,12 +81,15 @@ const getBase64 = file => new Promise((resolve, reject) => {
   reader.onerror = error => reject(error)
 })
 
+
+const validated = ref(false)
+
 const updateValue = (e) => {
   getBase64(e.target.files[0]).then(base64 => {
     modelValue.value = base64
-    isValidRef.value = errors.value.length === 0
+    validated.value = true
     emit('update', {
-      value: modelValue.value,
+      value: modelValue,
       isValid: errors.value.length === 0,
     })
   })
