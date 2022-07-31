@@ -4,46 +4,6 @@ import { defineStore } from 'pinia'
 export const useBusStore = defineStore(
     'bus-store',
     () => {
-        const COLUMNS = [
-            {
-                label: 'N°',
-                field: 'id',
-            },
-            {
-                label: 'Placa',
-                field: 'plate',
-            },
-            {
-                label: 'Color',
-                field: 'color',
-            },
-            {
-                label: 'Marca',
-                field: 'brand',
-            },
-            {
-                label: 'Modelo',
-                field: 'model',
-            },
-            {
-                label: 'Serial',
-                field: 'serial',
-            },
-            {
-                label: 'Año',
-                field: 'year',
-            },
-            {
-                label: 'Imagen',
-                field: 'image',
-                type: 'callback',
-            },
-            {
-                label: 'Estado',
-                field: 'status',
-                type: 'callback',
-            },
-        ]
 
         const list = reactive({
             isLoading: false,
@@ -56,6 +16,47 @@ export const useBusStore = defineStore(
                 next_page: null,
                 last_page: 1,
             },
+            COLUMNS: [
+                {
+                    label: 'N°',
+                    field: 'id',
+                },
+                {
+                    label: 'Placa',
+                    field: 'plate',
+                },
+                {
+                    label: 'Color',
+                    field: 'color',
+                },
+                {
+                    label: 'Marca',
+                    field: 'brand',
+                },
+                {
+                    label: 'Modelo',
+                    field: 'model',
+                },
+                {
+                    label: 'Año',
+                    field: 'year',
+                },
+                {
+                    label: 'Imagen',
+                    field: 'image',
+                    type: 'callback',
+                },
+                {
+                    label: 'Estado',
+                    field: 'status',
+                    type: 'callback',
+                },
+                {
+                    label: 'Acciones',
+                    field: 'actions',
+                    type: 'callback',
+                },
+            ]
         })
 
         const createStatus = reactive({
@@ -103,10 +104,23 @@ export const useBusStore = defineStore(
             return getAll()
         }
 
-        async function create(data) {
+        async function save(data) {
             createStatus.isLoading = true
             createStatus.data = {}
             createStatus.errors = {}
+            if(data.id) {
+                return $fetch(`/api/bus/update`, {
+                    method: 'POST',
+                    body: data,
+                }).then(({ data, message }) => {
+                    createStatus.isLoading = false
+                    createStatus.data = data.bus
+                    return message || ''
+                }).catch(error => {
+                    createStatus.isLoading = false
+                    console.log(error)
+                })
+            }
             return $fetch('/api/bus/create', {
                 method: 'POST',
                 body: data,
@@ -121,13 +135,31 @@ export const useBusStore = defineStore(
             })
         }
 
+        async function deleteItem({ id }) {
+            createStatus.isLoading = true
+            createStatus.data = {}
+            createStatus.errors = {}
+            return $fetch('/api/bus/delete', {
+                method: 'POST',
+                body: { id },
+            }).then(({ data, message }) => {
+                createStatus.isLoading = false
+                createStatus.data = data.bus
+                createStatus.errors = {}
+                return message || ''
+            }).catch(({ data }) => {
+                createStatus.isLoading = false
+                return Promise.reject(JSON.parse(data.message))
+            })
+        }
+
         return {
-            COLUMNS,
             list,
             getAll,
             updatePerPage,
             updatePage,
-            create,
+            save,
+            delete: deleteItem,
             createStatus,
         }
     },

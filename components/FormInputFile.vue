@@ -2,11 +2,19 @@
   {{ label }}
   <input
     type="file"
-    :value="forms[store].structure[field].value"
     @input="updateValue"
+    ref="file"
+  />
+  <Image
+    v-if="forms[store].structure[field].type === 'image' && forms[store].structure[field].fileOld"
+    :src="forms[store].structure[field].fileOld"
   />
   <template
-    v-if="forms[store].structure[field].errors.length && forms[store].isValidated"
+    v-if="
+      forms[store].structure[field].errors.length &&
+      forms[store].structure[field].errors[0] &&
+      forms[store].isValidated
+    "
   >
     <div>
       {{ forms[store].structure[field].errors }}
@@ -15,9 +23,11 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { watch, computed, ref } from 'vue'
 
 import { storeToRefs } from 'pinia'
+
+import Image from '@/components/Image.vue'
 
 import { useFormConfigStore } from '@/stores/formConfig'
 
@@ -25,7 +35,9 @@ const formConfigStore = useFormConfigStore()
 const { forms } = storeToRefs(formConfigStore)
 const { setValue, setErrors } = formConfigStore
 
-const { label } = forms.value[store].structure[field]
+const { label, value } = storeToRefs(forms.value[store].structure[field])
+
+const file = ref(null)
 
 const {
   store,
@@ -74,12 +86,29 @@ const errors = computed(() => {
   }).map(validation => validation.message)
 })
 
+watch(() => forms.value[store].structure[field].value, (currentValue, oldValue) => {
+  console.log('oldValue', oldValue.slice(0, 15));
+  console.log('currentValue', currentValue.slice(0, 15));
+  oldValue = oldValue.slice(0, 15);
+  currentValue = currentValue.slice(0, 15);
+  if (oldValue !== currentValue && !currentValue) {
+    file.value.type = 'text'
+    file.value.type = 'file'
+    setErrors(store, field, errors.value)
+  }
+});
+
 const updateValue = (e) => {
   const value = e.target.files[0]
+  if(!value) return
   getBase64(value).then(base64 => {
     setValue(store, field, base64)
     setErrors(store, field, errors.value)
   })
 }
+
+onMounted(() => {
+  setErrors(store, field, errors.value)
+})
 
 </script>

@@ -19,7 +19,12 @@
       <tr v-for="row of data" :key="row.id">
         <td v-for="column in columns" :key="column.field">
           <div v-if="column.type === 'callback'">
-            <slot name="callback" :data="row?.[column.field]" :field="column.field"/>
+            <slot
+              name="callback"
+              :data="row?.[column.field]"
+              :field="column.field"
+              :row="row"
+            />
           </div>
           <div v-else>
             {{ row[column.field] }}

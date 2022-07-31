@@ -6,7 +6,11 @@
     @keyup="updateValue($event.target.value)"
   />
   <template
-    v-if="forms[store].structure[field].errors.length && forms[store].isValidated"
+    v-if="
+      forms[store].structure[field].errors.length &&
+      forms[store].structure[field].errors[0] &&
+      forms[store].isValidated
+    "
   >
     <div>
       {{ forms[store].structure[field].errors }}
@@ -58,9 +62,19 @@ const errors = computed(() => {
   }).map(validation => validation.message)
 })
 
+watch(() => forms.value[store].structure[field].value, (currentValue, oldValue) => {
+  if (oldValue !== currentValue && !currentValue) {
+    setErrors(store, field, errors.value)
+  }
+});
+
 const updateValue = (value) => {
   setValue(store, field, parseFloat(value))
   setErrors(store, field, errors.value)
 }
+
+onMounted(() => {
+  setErrors(store, field, errors.value)
+})
 
 </script>
