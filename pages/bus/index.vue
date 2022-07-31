@@ -27,31 +27,22 @@
       </template>
     </template>
   </TableCustom>
-  <Form>
-    <template
-      v-for="(item, index) in formItems"
-      :key="index"
-    >
-      <br/>
-      <br/>
-      <component :is="callComponent[item.component](item)" @update="($event) => { item.value = $event.value; item.isValid = $event.isValid}" />
-    </template>
-  </Form>
+  {{ createStatus }}
+  <Form
+    name="bus"
+
+    :structure="FORM_STRUCTURE"
+
+    @submit="submit"
+
+    ref="form"
+  />
   <br/>
-  <br/>
-  <br/>
-  <pre>
-    <code>
-      {{ formItems }}
-    </code>
-  </pre>
 </template>
 
 <script setup>
 import { storeToRefs } from 'pinia'
 import { useBusStore } from '@/stores/bus'
-
-import callComponent from '@/utils/callComponent'
 
 import TableCustom from '~/components/TableCustom.vue'
 import Image from '~/components/Image.vue'
@@ -59,107 +50,108 @@ import Form from '~/components/Form.vue'
 
 const busStore = useBusStore()
 const { COLUMNS } = busStore
-const { list } = storeToRefs(busStore)
+const { list, createStatus } = storeToRefs(busStore)
 
-const { getAll, updatePerPage, updatePage } = busStore
+const { getAll, updatePerPage, updatePage, create } = busStore
 
-const formItems = reactive([
-  {
-    label: 'Imagen',
-    field: 'image',
-    validations: [
-      { required: true, message: 'Este campo es requerido' },
-      { type: ['webp', 'jpeg', 'jpg', 'png'], message: 'El archivo debe ser una imagen (webp, jpeg, jpg, png)' },
-    ],
-    value: '',
-    component: 'FormInputFile',
-    isValid: true,
-  },
-  {
+const FORM_STRUCTURE = {
+  brand: {
     label: 'Marca',
-    field: 'brand',
     validations: [
       { required: true, message: 'Este campo es requerido' },
       { min: 3, message: 'Mínimo 3 caracteres' },
       { max: 20, message: 'Máximo 20 caracteres' }
     ],
     value: '',
+    errors: [''],
     component: 'FormInputText',
-    isValid: true,
   },
-  {
+  model: {
     label: 'Modelo',
-    field: 'model',
     validations: [
       { required: true, message: 'Este campo es requerido' },
       { min: 3, message: 'Mínimo 3 caracteres' },
       { max: 20, message: 'Máximo 20 caracteres' }
     ],
     value: '',
+    errors: [''],
     component: 'FormInputText',
-    isValid: true,
   },
-  {
+  color: {
     label: 'Color',
-    field: 'color',
     validations: [
       { required: true, message: 'Este campo es requerido' },
       { min: 3, message: 'Mínimo 3 caracteres' },
       { max: 20, message: 'Máximo 20 caracteres' }
     ],
     value: '',
+    errors: [''],
     component: 'FormInputText',
-    isValid: true,
   },
-  {
+  plate: {
     label: 'Placa',
-    field: 'plate',
     validations: [
       { required: true, message: 'Este campo es requerido' },
       { min: 3, message: 'Mínimo 3 caracteres' },
       { max: 20, message: 'Máximo 20 caracteres' }
     ],
     value: '',
+    errors: [''],
     component: 'FormInputText',
-    isValid: true,
   },
-  {
-    label: 'Placa',
-    field: 'plate',
-    validations: [
-      { required: true, message: 'Este campo es requerido' },
-      { min: 3, message: 'Mínimo 3 caracteres' },
-      { max: 20, message: 'Máximo 20 caracteres' }
-    ],
-    value: '',
-    component: 'FormInputText',
-    isValid: true,
-  },
-  {
+  quantity_seats: {
     label: 'Cantidad de asientos',
-    field: 'quantity_seats',
     validations: [
       { required: true, message: 'Este campo es requerido' },
       { min: 1, message: 'Mínimo 1' },
       { max: 10, message: 'Máximo 10' },
     ],
     value: '',
+    errors: [''],
     component: 'FormInputNumeric',
-    isValid: true,
   },
-  {
+  year: {
     label: 'Año',
-    field: 'year',
     validations: [
       { required: true, message: 'Este campo es requerido' },
       { min: 1950, message: 'Mínimo 1950' },
       { max: 2050, message: 'Máximo 2050' },
     ],
     value: '',
+    errors: [''],
     component: 'FormInputNumeric',
-    isValid: true,
   },
-])
+  image: {
+    label: 'Imagen',
+    validations: [
+      // { required: true, message: 'Este campo es requerido' },
+      { type: ['webp', 'jpeg', 'jpg', 'png'], message: 'El archivo debe ser una imagen (webp, jpeg, jpg, png)' },
+    ],
+    value: '',
+    errors: [],
+    component: 'FormInputFile',
+  },
+  status: {
+    label: 'Estado',
+    validations: [
+      { required: true, message: 'Este campo es requerido' },
+    ],
+    value: undefined,
+    errors: [''],
+    component: 'FormInputCheckbox',
+  },
+}
+
+const form = ref();
+const submit = async (values) => {
+  try {
+    await create(values)
+    form.value.reset(FORM_STRUCTURE)
+    await getAll()
+  } catch ({ message }) {
+    form.value.setErrors(message)
+  }
+}
 
 onMounted(() => {
   getAll()

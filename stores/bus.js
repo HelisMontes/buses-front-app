@@ -58,6 +58,12 @@ export const useBusStore = defineStore(
             },
         })
 
+        const createStatus = reactive({
+            isLoading: false,
+            data: {},
+            errors: {},
+        })
+
         // const listAltered = computed(() => {
         //     const { data } = list
         //     return data.map(item => {
@@ -88,14 +94,31 @@ export const useBusStore = defineStore(
                 console.log(error)
             })
         }
-
-        function updatePerPage(per_page) {
+        async function updatePerPage(per_page) {
             list.meta.per_page = per_page
-            getAll()
+            return getAll()
         }
-        function updatePage(page) {
+        async function updatePage(page) {
             list.meta.page = page
-            getAll()
+            return getAll()
+        }
+
+        async function create(data) {
+            createStatus.isLoading = true
+            createStatus.data = {}
+            createStatus.errors = {}
+            return $fetch('/api/bus/create', {
+                method: 'POST',
+                body: data,
+            }).then(({ data, message }) => {
+                createStatus.isLoading = false
+                createStatus.data = data.bus
+                createStatus.errors = {}
+                return message || ''
+            }).catch(({ data }) => {
+                createStatus.isLoading = false
+                return Promise.reject(JSON.parse(data.message))
+            })
         }
 
         return {
@@ -104,6 +127,8 @@ export const useBusStore = defineStore(
             getAll,
             updatePerPage,
             updatePage,
+            create,
+            createStatus,
         }
     },
 )

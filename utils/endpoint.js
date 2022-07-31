@@ -21,8 +21,11 @@ export default {
                     body: JSON.stringify(body),
                 },
             )
-        }catch({data, message}){
-            return data
+        }catch({ data }){
+            // console.log('post', data)
+            return Promise.reject(JSON.stringify({
+                message: data.message,
+            }))
         }
     },
 }
