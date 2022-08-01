@@ -136,9 +136,17 @@ const FORM_STRUCTURE = {
     validations: [
       { required: true, message: 'Este campo es requerido' },
     ],
+    options: {
+      DRIV: {
+        label: 'Conductor',
+      },
+      PASS: {
+        label: 'Pasajero',
+      },
+    },
     value: '',
     errors: [],
-    component: 'FormInputText',
+    component: 'FormInputDatalist',
   },
   image: {
     type: 'image',
