@@ -1,9 +1,46 @@
-import { defineStore } from 'pinia'
+import { defineStore, storeToRefs } from 'pinia'
+
+import { useBusStore } from './bus'
+import { useLocationStore } from './location'
+import { useUserStore } from './user'
 
 
 export const useJourneyStore = defineStore(
     'journey-store',
     () => {
+
+        const busStore = useBusStore()
+        const {
+            getAll: busGetAll,
+            updatePerPage: busUpdatePerPage,
+            updatePage: busUpdatePage,
+        } = busStore
+        const {
+            list: busList,
+            listToObject: busListToObject,
+        } = storeToRefs(busStore)
+
+        const locationStore = useLocationStore()
+        const {
+            getAll: locationGetAll,
+            updatePerPage: locationUpdatePerPage,
+            updatePage: locationUpdatePage,
+        } = locationStore
+        const {
+            list: locationList,
+            listToObject: locationListToObject,
+        } = storeToRefs(locationStore)
+
+        const userStore = useUserStore()
+        const {
+            getAll: userGetAll,
+            updatePerPage: userUpdatePerPage,
+            updatePage: userUpdatePage,
+        } = userStore
+        const {
+            list: userList,
+            listToObject: userListToObject,
+        } = storeToRefs(userStore)
 
         const list = reactive({
             isLoading: false,
@@ -72,15 +109,17 @@ export const useJourneyStore = defineStore(
             errors: {},
         })
 
-        // const listAltered = computed(() => {
-        //     const { data } = list
-        //     return data.map(item => {
-        //         return {
-        //             ...item,
-        //             text: item.text + ' (altered)',
-        //         }
-        //     })
-        // })
+        const listToObject = computed(() => {
+            const { data } = list
+            const object = {}
+            data.forEach(item => {
+                object[item.id] = {
+                    label: item.origen + ' ' + item.destination + ' ' + item.bus + ' ' + item.user,
+                    description: item.price + ' ' + item.datetime_start + ' ' + item.datetime_end,
+                }
+            })
+            return object
+        })
 
         async function getAll() {
             const params = new URLSearchParams({
@@ -89,18 +128,35 @@ export const useJourneyStore = defineStore(
             })
             list.isLoading = true
             list.data = []
-            return $fetch(`/api/journey/?${params}`, {
-                method: 'GET',
-            }).then(({ data, message }) => {
+            try{
+                if(!busList?.value?.data?.length){
+                    busUpdatePage(1)
+                    busUpdatePerPage(10000)
+                    await busGetAll()
+                }
+                if(!locationList?.value?.data?.length){
+                    locationUpdatePage(1)
+                    locationUpdatePerPage(10000)
+                    await locationGetAll()
+                }
+                const listResult = await $fetch(`/api/journey/?${params}`, {
+                    method: 'GET',
+                })
                 list.isLoading = false
-                const { list: journeys, meta } = data.journeys
+                const { list: journeys, meta } = listResult.data.journeys
+                console.log(journeys)
+                for(let journey of journeys){
+                    journey.bus_data = busListToObject.value[journey.bus]
+                    journey.location_data = locationListToObject.value[journey.location]
+                    journey.user_data = locationListToObject.value[journey.user]
+                }
                 list.data = journeys
                 list.meta = meta
-                return message || ''
-            }).catch(({ data }) => {
-                createStatus.isLoading = false
+                return Promise.resolve(journeys)
+            }catch({ data }){
+                list.isLoading = false
                 return Promise.reject(JSON.parse(data.message))
-            })
+            }
         }
         async function updatePerPage(per_page) {
             list.meta.per_page = per_page
@@ -168,6 +224,7 @@ export const useJourneyStore = defineStore(
             save,
             delete: deleteItem,
             createStatus,
+            listToObject,
         }
     },
 )

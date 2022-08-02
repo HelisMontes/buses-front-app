@@ -50,61 +50,77 @@
 
 <script setup>
 import { storeToRefs } from 'pinia'
-import { useJourneyStore } from '@/stores/journey'
 
 import TableCustom from '~/components/TableCustom.vue'
 import Image from '~/components/Image.vue'
 import Form from '~/components/Form.vue'
+
+import { useJourneyStore } from '@/stores/journey'
+import { useBusStore } from '@/stores/bus'
+import { useLocationStore } from '@/stores/location'
+import { useUserStore } from '@/stores/user'
 
 const journeyStore = useJourneyStore()
 const { list, createStatus } = storeToRefs(journeyStore)
 const { getAll, updatePerPage, updatePage, save } = journeyStore
 const { COLUMNS } = journeyStore.list
 
+const busStore = useBusStore()
+const { listToObject: busListToObject } = storeToRefs(busStore)
+const { getAll: busGetAll } = busStore
+
+const locationStore = useLocationStore()
+const { listToObject: locationListToObject } = storeToRefs(locationStore)
+const { getAll: locationGetAll } = locationStore
+
+const userStore = useUserStore()
+const { listToObject: userListToObject } = storeToRefs(userStore)
+const { getAll: userGetAll } = userStore
+
+await busGetAll()
+await locationGetAll()
+await userGetAll()
+
 const FORM_STRUCTURE = {
   origen: {
     label: 'Origen',
     validations: [
       { required: true, message: 'Este campo es requerido' },
-      { min: 3, message: 'Mínimo 3 caracteres' },
-      { max: 20, message: 'Máximo 20 caracteres' },
     ],
+    options: locationListToObject.value,
     value: '',
     errors: [],
-    component: 'FormInputText',
+    component: 'FormInputDatalist',
   },
   destination: {
     label: 'Destino',
     validations: [
       { required: true, message: 'Este campo es requerido' },
-      { min: 3, message: 'Mínimo 3 caracteres' },
-      { max: 20, message: 'Máximo 20 caracteres' },
     ],
+    options: locationListToObject.value,
     value: '',
     errors: [],
-    component: 'FormInputText',
+    component: 'FormInputDatalist',
   },
   bus: {
     label: 'Bus',
     validations: [
       { required: true, message: 'Este campo es requerido' },
-      { min: 3, message: 'Mínimo 3 caracteres' },
-      { max: 20, message: 'Máximo 20 caracteres' },
     ],
+    options: busListToObject.value,
     value: '',
     errors: [],
-    component: 'FormInputText',
+    component: 'FormInputDatalist',
   },
   user: {
     label: 'Usuario',
     validations: [
       { required: true, message: 'Este campo es requerido' },
-      { min: 3, message: 'Mínimo 3 caracteres' },
-      { max: 20, message: 'Máximo 20 caracteres' },
     ],
+    options: userListToObject.value,
     value: '',
     errors: [],
-    component: 'FormInputText',
+    component: 'FormInputDatalist',
   },
   price: {
     label: 'Precio',
