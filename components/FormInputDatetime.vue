@@ -1,7 +1,7 @@
 <template>
   {{ label }}
   <input
-    type="date"
+    type="datetime-local"
     :value="forms[store].structure[field].value"
     @change="updateValue($event.target.value)"
   />
@@ -48,7 +48,7 @@ const {
 const errors = computed(() => {
   const { validations, value } = forms.value[store].structure[field]
   return validations.filter(validation => {
-    let { required, minDate, maxDate } = validation
+    let { required, minDate, maxDate, moreThanField } = validation
     if (required && !value) {
       return true
     }
@@ -57,6 +57,8 @@ const errors = computed(() => {
 
     if(minDate && minDate === 'today'){
       minDate = new Date()
+    }else if(minDate && minDate === 'now'){
+      minDate = new Date(Date.now())
     }else if(minDate){
       minDate = new Date(minDate)
     }
@@ -66,11 +68,20 @@ const errors = computed(() => {
 
     if(maxDate && maxDate === 'today'){
       maxDate = new Date()
+    }else if(maxDate && maxDate === 'now'){
+      maxDate = new Date(Date.now())
     }else if(maxDate){
       maxDate = new Date(maxDate)
     }
     if (maxDate && date > maxDate) {
       return true
+    }
+
+    if(moreThanField){
+      const moreThanFieldValue = forms.value[store].structure[moreThanField].value
+      if(moreThanFieldValue && date < new Date(moreThanFieldValue)){
+        return true
+      }
     }
     return false
   }).map(validation => validation.message)
