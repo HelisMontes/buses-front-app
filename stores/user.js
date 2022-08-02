@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 
 
-export const useBusStore = defineStore(
-    'bus-store',
+export const useUserStore = defineStore(
+    'user-store',
     () => {
 
         const list = reactive({
@@ -22,24 +22,33 @@ export const useBusStore = defineStore(
                     field: 'id',
                 },
                 {
-                    label: 'Placa',
-                    field: 'plate',
+                    label: 'identification',
+                    field: 'identification',
                 },
                 {
-                    label: 'Color',
-                    field: 'color',
+                    label: 'name',
+                    field: 'name',
                 },
                 {
-                    label: 'Marca',
-                    field: 'brand',
+                    label: 'last_name',
+                    field: 'last_name',
                 },
                 {
-                    label: 'Modelo',
-                    field: 'model',
+                    label: 'email',
+                    field: 'email',
                 },
                 {
-                    label: 'Año',
-                    field: 'year',
+                    label: 'phone',
+                    field: 'phone',
+                },
+                {
+                    label: 'birth_date',
+                    field: 'birth_date',
+                },
+                {
+                    label: 'type_user',
+                    field: 'type_user',
+                    type: 'callback',
                 },
                 {
                     label: 'Imagen',
@@ -82,12 +91,12 @@ export const useBusStore = defineStore(
             })
             list.isLoading = true
             list.data = []
-            return $fetch(`/api/bus/?${params}`, {
+            return $fetch(`/api/user/?${params}`, {
                 method: 'GET',
             }).then(({ data, message }) => {
                 list.isLoading = false
-                const { list: buses, meta } = data.buses
-                list.data = buses
+                const { list: users, meta } = data.users
+                list.data = users
                 list.meta = meta
                 return message || ''
             }).catch(({ data }) => {
@@ -109,24 +118,24 @@ export const useBusStore = defineStore(
             createStatus.data = {}
             createStatus.errors = {}
             if(data.id) {
-                return $fetch(`/api/bus/update`, {
+                return $fetch(`/api/user/update`, {
                     method: 'POST',
                     body: data,
                 }).then(({ data, message }) => {
                     createStatus.isLoading = false
-                    createStatus.data = data.bus
+                    createStatus.data = data.user
                     return message || ''
                 }).catch(({ data }) => {
                     createStatus.isLoading = false
                     return Promise.reject(JSON.parse(data.message))
                 })
             }
-            return $fetch('/api/bus/create', {
+            return $fetch('/api/user/create', {
                 method: 'POST',
                 body: data,
             }).then(({ data, message }) => {
                 createStatus.isLoading = false
-                createStatus.data = data.bus
+                createStatus.data = data.user
                 createStatus.errors = {}
                 return message || ''
             }).catch(({ data }) => {
@@ -139,12 +148,12 @@ export const useBusStore = defineStore(
             createStatus.isLoading = true
             createStatus.data = {}
             createStatus.errors = {}
-            return $fetch('/api/bus/delete', {
+            return $fetch('/api/user/delete', {
                 method: 'POST',
                 body: { id },
             }).then(({ data, message }) => {
                 createStatus.isLoading = false
-                createStatus.data = data.bus
+                createStatus.data = data.user
                 createStatus.errors = {}
                 return message || ''
             }).catch(({ data }) => {

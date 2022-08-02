@@ -1,5 +1,15 @@
 <template>
   <form>
+    <div
+      v-if="forms?.[name]?.errors?.length"
+    >
+      <div
+        v-for="error in forms[name].errors"
+        :key="error"
+      >
+        {{ error }}
+      </div>
+    </div>
     <template
       v-for="(item, index) in formItems"
       :key="index"
@@ -33,7 +43,7 @@ import { storeToRefs } from 'pinia'
 import { useFormConfigStore } from '@/stores/formConfig'
 
 const formConfigStore = useFormConfigStore()
-const { setForm, setFormValidated, getValues, setErrorsList, setData: setFormData } = formConfigStore
+const { setForm, setFormValidated, getValues, setErrorsList, setData: setFormData, setErrorsGeneral } = formConfigStore
 const { forms } = storeToRefs(formConfigStore)
 
 const emit = defineEmits(['submit'])
@@ -82,6 +92,7 @@ const setErrors = (errors) => {
 }
 const reset = (structure) => {
   setForm(name, { structure })
+  setErrorsGeneral(name, [])
 }
 const setData = (data) => {
   setFormData(name, { data })
