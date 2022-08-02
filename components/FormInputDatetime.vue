@@ -2,8 +2,8 @@
   {{ label }}
   <input
     type="datetime-local"
-    :value="forms[store].structure[field].value"
     @change="updateValue($event.target.value)"
+    ref="input"
   />
   <template
     v-if="
@@ -30,6 +30,8 @@ const { forms } = storeToRefs(formConfigStore)
 const { setValue, setErrors } = formConfigStore
 
 const { label } = forms.value[store].structure[field]
+
+const input = ref(null)
 
 const {
   store,
@@ -89,8 +91,11 @@ const errors = computed(() => {
 
 watch(() => forms.value[store].structure[field].value, (currentValue, oldValue) => {
   if (oldValue !== currentValue && !currentValue) {
-    setErrors(store, field, errors.value)
+    input.value.value = ''
+  }else if (oldValue !== currentValue && currentValue) {
+    input.value.value = currentValue
   }
+  setErrors(store, field, errors.value)
 });
 
 const updateValue = (value) => {

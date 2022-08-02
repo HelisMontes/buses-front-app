@@ -87,8 +87,6 @@ const errors = computed(() => {
 })
 
 watch(() => forms.value[store].structure[field].value, (currentValue, oldValue) => {
-  console.log('oldValue', oldValue.slice(0, 15));
-  console.log('currentValue', currentValue.slice(0, 15));
   oldValue = oldValue.slice(0, 15);
   currentValue = currentValue.slice(0, 15);
   if (oldValue !== currentValue && !currentValue) {

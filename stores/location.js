@@ -46,21 +46,22 @@ export const useLocationStore = defineStore(
             ]
         })
 
+        const listToObject = computed(() => {
+            const { data } = list
+            const object = {}
+            data.forEach(item => {
+                object[item.id] = {
+                    label: item.country + ' ' + item.city,
+                }
+            })
+            return object
+        })
+
         const createStatus = reactive({
             isLoading: false,
             data: {},
             errors: {},
         })
-
-        // const listAltered = computed(() => {
-        //     const { data } = list
-        //     return data.map(item => {
-        //         return {
-        //             ...item,
-        //             text: item.text + ' (altered)',
-        //         }
-        //     })
-        // })
 
         async function getAll() {
             const params = new URLSearchParams({
@@ -76,19 +77,23 @@ export const useLocationStore = defineStore(
                 const { list: locations, meta } = data.locations
                 list.data = locations
                 list.meta = meta
-                return message || ''
+                return Promise.resolve(locations)
             }).catch(({ data }) => {
-                createStatus.isLoading = false
+                list.isLoading = false
                 return Promise.reject(JSON.parse(data.message))
             })
         }
-        async function updatePerPage(per_page) {
+        async function updatePerPage(per_page, { reload = true } = {}) {
             list.meta.per_page = per_page
-            return getAll()
+            if (reload) {
+                getAll()
+            }
         }
-        async function updatePage(page) {
+        async function updatePage(page, { reload = true } = {}) {
             list.meta.page = page
-            return getAll()
+            if (reload) {
+                getAll()
+            }
         }
 
         async function save(data) {
@@ -148,6 +153,7 @@ export const useLocationStore = defineStore(
             save,
             delete: deleteItem,
             createStatus,
+            listToObject,
         }
     },
 )

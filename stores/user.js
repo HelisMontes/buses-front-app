@@ -4,7 +4,6 @@ import { defineStore } from 'pinia'
 export const useUserStore = defineStore(
     'user-store',
     () => {
-
         const list = reactive({
             isLoading: false,
             data: [],
@@ -74,15 +73,17 @@ export const useUserStore = defineStore(
             errors: {},
         })
 
-        // const listAltered = computed(() => {
-        //     const { data } = list
-        //     return data.map(item => {
-        //         return {
-        //             ...item,
-        //             text: item.text + ' (altered)',
-        //         }
-        //     })
-        // })
+        const listToObject = computed(() => {
+            const { data } = list
+            const object = {}
+            data.forEach(item => {
+                object[item.id] = {
+                    label: item.identification + ' ' + item.name + ' ' + item.last_name,
+                    description: item.email + ' ' + item.phone + ' ' + item.birth_date,
+                }
+            })
+            return object
+        })
 
         async function getAll() {
             const params = new URLSearchParams({
@@ -98,19 +99,23 @@ export const useUserStore = defineStore(
                 const { list: users, meta } = data.users
                 list.data = users
                 list.meta = meta
-                return message || ''
+                return Promise.resolve(users)
             }).catch(({ data }) => {
                 createStatus.isLoading = false
                 return Promise.reject(JSON.parse(data.message))
             })
         }
-        async function updatePerPage(per_page) {
+        async function updatePerPage(per_page, { reload = true } = {}) {
             list.meta.per_page = per_page
-            return getAll()
+            if (reload) {
+                getAll()
+            }
         }
-        async function updatePage(page) {
+        async function updatePage(page, { reload = true } = {}) {
             list.meta.page = page
-            return getAll()
+            if (reload) {
+                getAll()
+            }
         }
 
         async function save(data) {
@@ -170,6 +175,7 @@ export const useUserStore = defineStore(
             save,
             delete: deleteItem,
             createStatus,
+            listToObject,
         }
     },
 )

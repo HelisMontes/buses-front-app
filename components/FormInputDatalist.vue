@@ -11,7 +11,7 @@
     X
   </button>
   <datalist :id="store + '-' + field">
-    <option v-for="(option, key) in options" :key="key" :value="option.label"/>
+    <option v-for="(option, key) in options" :key="key" :value="option.label">{{ option?.description }}</option>
   </datalist>
   <template
     v-if="
@@ -67,6 +67,9 @@ const errors = computed(() => {
 watch(() => forms.value[store].structure[field].value, (currentValue, oldValue) => {
   if (oldValue !== currentValue && !currentValue) {
     valueToShow.value = ''
+    setErrors(store, field, errors.value)
+  }else if (oldValue !== currentValue && currentValue) {
+    valueToShow.value = options[currentValue].label
     setErrors(store, field, errors.value)
   }
 });

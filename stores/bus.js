@@ -4,7 +4,6 @@ import { defineStore } from 'pinia'
 export const useBusStore = defineStore(
     'bus-store',
     () => {
-
         const list = reactive({
             isLoading: false,
             data: [],
@@ -65,15 +64,17 @@ export const useBusStore = defineStore(
             errors: {},
         })
 
-        // const listAltered = computed(() => {
-        //     const { data } = list
-        //     return data.map(item => {
-        //         return {
-        //             ...item,
-        //             text: item.text + ' (altered)',
-        //         }
-        //     })
-        // })
+        const listToObject = computed(() => {
+            const { data } = list
+            const object = {}
+            data.forEach(item => {
+                object[item.id] = {
+                    label: item.plate + ' ' + item.brand + ' ' + item.model,
+                    description: item.color + ' ' + item.year,
+                }
+            })
+            return object
+        })
 
         async function getAll() {
             const params = new URLSearchParams({
@@ -89,19 +90,23 @@ export const useBusStore = defineStore(
                 const { list: buses, meta } = data.buses
                 list.data = buses
                 list.meta = meta
-                return message || ''
+                return Promise.resolve(buses)
             }).catch(({ data }) => {
-                createStatus.isLoading = false
+                list.isLoading = false
                 return Promise.reject(JSON.parse(data.message))
             })
         }
-        async function updatePerPage(per_page) {
+        async function updatePerPage(per_page, { reload = true } = {}) {
             list.meta.per_page = per_page
-            return getAll()
+            if (reload) {
+                getAll()
+            }
         }
-        async function updatePage(page) {
+        async function updatePage(page, { reload = true } = {}) {
             list.meta.page = page
-            return getAll()
+            if (reload) {
+                getAll()
+            }
         }
 
         async function save(data) {
@@ -161,6 +166,7 @@ export const useBusStore = defineStore(
             save,
             delete: deleteItem,
             createStatus,
+            listToObject,
         }
     },
 )
