@@ -1,10 +1,9 @@
 import { defineStore } from 'pinia'
 
 
-export const useBusStore = defineStore(
-    'bus-store',
+export const useLocationStore = defineStore(
+    'location-store',
     () => {
-
         const list = reactive({
             isLoading: false,
             data: [],
@@ -22,24 +21,12 @@ export const useBusStore = defineStore(
                     field: 'id',
                 },
                 {
-                    label: 'Placa',
-                    field: 'plate',
+                    label: 'Pais',
+                    field: 'country',
                 },
                 {
-                    label: 'Color',
-                    field: 'color',
-                },
-                {
-                    label: 'Marca',
-                    field: 'brand',
-                },
-                {
-                    label: 'Modelo',
-                    field: 'model',
-                },
-                {
-                    label: 'Año',
-                    field: 'year',
+                    label: 'Ciudad',
+                    field: 'city',
                 },
                 {
                     label: 'Imagen',
@@ -82,12 +69,12 @@ export const useBusStore = defineStore(
             })
             list.isLoading = true
             list.data = []
-            return $fetch(`/api/bus/?${params}`, {
+            return $fetch(`/api/location/?${params}`, {
                 method: 'GET',
             }).then(({ data, message }) => {
                 list.isLoading = false
-                const { list: buses, meta } = data.buses
-                list.data = buses
+                const { list: locations, meta } = data.locations
+                list.data = locations
                 list.meta = meta
                 return message || ''
             }).catch(({ data }) => {
@@ -109,24 +96,24 @@ export const useBusStore = defineStore(
             createStatus.data = {}
             createStatus.errors = {}
             if(data.id) {
-                return $fetch(`/api/bus/update`, {
+                return $fetch(`/api/location/update`, {
                     method: 'POST',
                     body: data,
                 }).then(({ data, message }) => {
                     createStatus.isLoading = false
-                    createStatus.data = data.bus
+                    createStatus.data = data.location
                     return message || ''
                 }).catch(({ data }) => {
                     createStatus.isLoading = false
                     return Promise.reject(JSON.parse(data.message))
                 })
             }
-            return $fetch('/api/bus/create', {
+            return $fetch('/api/location/create', {
                 method: 'POST',
                 body: data,
             }).then(({ data, message }) => {
                 createStatus.isLoading = false
-                createStatus.data = data.bus
+                createStatus.data = data.location
                 createStatus.errors = {}
                 return message || ''
             }).catch(({ data }) => {
@@ -139,12 +126,12 @@ export const useBusStore = defineStore(
             createStatus.isLoading = true
             createStatus.data = {}
             createStatus.errors = {}
-            return $fetch('/api/bus/delete', {
+            return $fetch('/api/location/delete', {
                 method: 'POST',
                 body: { id },
             }).then(({ data, message }) => {
                 createStatus.isLoading = false
-                createStatus.data = data.bus
+                createStatus.data = data.location
                 createStatus.errors = {}
                 return message || ''
             }).catch(({ data }) => {

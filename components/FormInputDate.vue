@@ -1,9 +1,9 @@
 <template>
   {{ label }}
   <input
-    type="text"
+    type="date"
     :value="forms[store].structure[field].value"
-    @keyup="updateValue($event.target.value)"
+    @change="updateValue($event.target.value)"
   />
   <template
     v-if="
@@ -48,20 +48,28 @@ const {
 const errors = computed(() => {
   const { validations, value } = forms.value[store].structure[field]
   return validations.filter(validation => {
-    const { required, min, max, match, email } = validation
+    let { required, minDate, maxDate } = validation
     if (required && !value) {
       return true
     }
-    if (min && value.length < min) {
+
+    const date = new Date(value)
+
+    if(minDate && minDate === 'today'){
+      minDate = new Date()
+    }else if(minDate){
+      minDate = new Date(minDate)
+    }
+    if (minDate && date < minDate) {
       return true
     }
-    if (max && value.length > max) {
-      return true
+
+    if(maxDate && maxDate === 'today'){
+      maxDate = new Date()
+    }else if(minDate){
+      maxDate = new Date(maxDate)
     }
-    if (match && !value.match(match)) {
-      return true
-    }
-    if (email && !value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+    if (maxDate && date > maxDate) {
       return true
     }
     return false

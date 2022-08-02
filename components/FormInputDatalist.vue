@@ -1,10 +1,18 @@
 <template>
   {{ label }}
   <input
-    type="text"
-    :value="forms[store].structure[field].value"
-    @keyup="updateValue($event.target.value)"
-  />
+    :list="store + '-' + field"
+    :value="valueToShow"
+    @change="updateValue($event.target.value)"
+  >
+  <button
+    @click.stop.prevent="updateValue('')"
+  >
+    X
+  </button>
+  <datalist :id="store + '-' + field">
+    <option v-for="(option, key) in options" :key="key" :value="option.label"/>
+  </datalist>
   <template
     v-if="
       forms[store].structure[field].errors.length &&
@@ -29,7 +37,7 @@ const formConfigStore = useFormConfigStore()
 const { forms } = storeToRefs(formConfigStore)
 const { setValue, setErrors } = formConfigStore
 
-const { label } = forms.value[store].structure[field]
+const { label, options } = forms.value[store].structure[field]
 
 const {
   store,
@@ -48,20 +56,8 @@ const {
 const errors = computed(() => {
   const { validations, value } = forms.value[store].structure[field]
   return validations.filter(validation => {
-    const { required, min, max, match, email } = validation
+    const { required } = validation
     if (required && !value) {
-      return true
-    }
-    if (min && value.length < min) {
-      return true
-    }
-    if (max && value.length > max) {
-      return true
-    }
-    if (match && !value.match(match)) {
-      return true
-    }
-    if (email && !value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
       return true
     }
     return false
@@ -70,11 +66,23 @@ const errors = computed(() => {
 
 watch(() => forms.value[store].structure[field].value, (currentValue, oldValue) => {
   if (oldValue !== currentValue && !currentValue) {
+    valueToShow.value = ''
     setErrors(store, field, errors.value)
   }
 });
 
-const updateValue = (value) => {
+const valueToShow = ref('')
+
+const updateValue = (label) => {
+  valueToShow.value = label
+  let value = ''
+  for(const key in options) {
+    const option = options[key]
+    if (option.label === label) {
+      value = key
+      break
+    }
+  }
   setValue(store, field, value)
   setErrors(store, field, errors.value)
 }

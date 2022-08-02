@@ -43,10 +43,26 @@ export const useFormConfigStore = defineStore(
 
         function setErrorsList(key, errors) {
             if(!forms[key]) return
+            console.log('setErrorsList', key, errors)
             const structure = forms[key].structure
+            console.log('structure', structure)
             for (const item in structure) {
-                forms[key].structure[item].errors.splice(0, forms[key].structure[item].errors.length);
-                if(errors[item]) forms[key].structure[item].errors.push(...errors[item])
+                if (forms[key].structure[item].errors) {
+                    forms[key].structure[item].errors.splice(0, forms[key].structure[item].errors.length);
+                    if(errors[item]) forms[key].structure[item].errors.push(...errors[item])
+                    delete errors[item]
+                }
+            }
+            if (Object.keys(errors).length > 0) {
+                setErrorsGeneral(key, errors)
+            }
+        }
+
+        function setErrorsGeneral(key, errors) {
+            if(!forms[key]) return
+            forms[key].errors = []
+            for (const item in errors) {
+                forms[key].errors.push(...errors[item])
             }
         }
 
@@ -76,6 +92,7 @@ export const useFormConfigStore = defineStore(
             setFormValidated,
             setErrors,
             setErrorsList,
+            setErrorsGeneral,
             getValues,
         }
     },
