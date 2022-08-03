@@ -1,47 +1,9 @@
 import { defineStore, storeToRefs } from 'pinia'
 
-import { useBusStore } from './bus'
-import { useLocationStore } from './location'
-import { useUserStore } from './user'
-
 
 export const useJourneyStore = defineStore(
     'journey-store',
     () => {
-
-        const busStore = useBusStore()
-        const {
-            getAll: busGetAll,
-            updatePerPage: busUpdatePerPage,
-            updatePage: busUpdatePage,
-        } = busStore
-        const {
-            list: busList,
-            listToObject: busListToObject,
-        } = storeToRefs(busStore)
-
-        const locationStore = useLocationStore()
-        const {
-            getAll: locationGetAll,
-            updatePerPage: locationUpdatePerPage,
-            updatePage: locationUpdatePage,
-        } = locationStore
-        const {
-            list: locationList,
-            listToObject: locationListToObject,
-        } = storeToRefs(locationStore)
-
-        const userStore = useUserStore()
-        const {
-            getAll: userGetAll,
-            updatePerPage: userUpdatePerPage,
-            updatePage: userUpdatePage,
-        } = userStore
-        const {
-            list: userList,
-            listToObject: userListToObject,
-        } = storeToRefs(userStore)
-
         const list = reactive({
             isLoading: false,
             data: [],
@@ -59,35 +21,35 @@ export const useJourneyStore = defineStore(
                     field: 'id',
                 },
                 {
-                    label: 'origen',
+                    label: 'Origen',
                     field: 'origen',
                     type: 'callback',
                 },
                 {
-                    label: 'destination',
+                    label: 'Destino',
                     field: 'destination',
                     type: 'callback',
                 },
                 {
-                    label: 'bus',
+                    label: 'Bus',
                     field: 'bus',
                     type: 'callback',
                 },
                 {
-                    label: 'user',
+                    label: 'Usuario',
                     field: 'user',
                     type: 'callback',
                 },
                 {
-                    label: 'price',
+                    label: 'Precio',
                     field: 'price',
                 },
                 {
-                    label: 'datetime_start',
+                    label: 'Fecha de salida',
                     field: 'datetime_start',
                 },
                 {
-                    label: 'datetime_end',
+                    label: 'Fecha de llegada',
                     field: 'datetime_end',
                 },
                 {
@@ -128,35 +90,18 @@ export const useJourneyStore = defineStore(
             })
             list.isLoading = true
             list.data = []
-            try{
-                if(!busList?.value?.data?.length){
-                    busUpdatePage(1)
-                    busUpdatePerPage(10000)
-                    await busGetAll()
-                }
-                if(!locationList?.value?.data?.length){
-                    locationUpdatePage(1)
-                    locationUpdatePerPage(10000)
-                    await locationGetAll()
-                }
-                const listResult = await $fetch(`/api/journey/?${params}`, {
-                    method: 'GET',
-                })
+            return $fetch(`/api/journey/?${params}`, {
+                method: 'GET',
+            }).then(({ data, message }) => {
                 list.isLoading = false
-                const { list: journeys, meta } = listResult.data.journeys
-                console.log(journeys)
-                for(let journey of journeys){
-                    journey.bus_data = busListToObject.value[journey.bus]
-                    journey.location_data = locationListToObject.value[journey.location]
-                    journey.user_data = locationListToObject.value[journey.user]
-                }
+                const { list: journeys, meta } = data.journeys
                 list.data = journeys
                 list.meta = meta
-                return Promise.resolve(journeys)
-            }catch({ data }){
+                return journeys
+            }).catch(({ data }) => {
                 list.isLoading = false
                 return Promise.reject(JSON.parse(data.message))
-            }
+            })
         }
         async function updatePerPage(per_page) {
             list.meta.per_page = per_page
@@ -216,6 +161,87 @@ export const useJourneyStore = defineStore(
             })
         }
 
+        const availableForSaleList = reactive({
+            isLoading: false,
+            data: [],
+            meta: {
+                page: 0,
+                per_page: 10,
+                total_items: 10,
+                prev_page: null,
+                next_page: null,
+                last_page: 1,
+            },
+            COLUMNS: [
+                {
+                    label: 'N°',
+                    field: 'id',
+                },
+                {
+                    label: 'Bus',
+                    field: 'bus',
+                    type: 'callback',
+                },
+                {
+                    label: 'Usuario',
+                    field: 'user',
+                    type: 'callback',
+                },
+                {
+                    label: 'Precio',
+                    field: 'price',
+                },
+                {
+                    label: 'Fecha de salida',
+                    field: 'datetime_start',
+                },
+                {
+                    label: 'Fecha de llegada',
+                    field: 'datetime_end',
+                },
+                {
+                    label: 'Acciones',
+                    field: 'actions',
+                    type: 'callback',
+                },
+            ]
+        })
+        async function availableForSaleGetAll() {
+            const params = new URLSearchParams({
+                ...availableForSaleList.meta,
+            })
+            availableForSaleList.isLoading = true
+            availableForSaleList.data = []
+            return $fetch(`/api/journey/available-for-sale?${params}`, {
+                method: 'GET',
+            }).then(({ data, message }) => {
+                availableForSaleList.isLoading = false
+                const { list: journeys, meta } = data.journeys
+                availableForSaleList.data = journeys
+                availableForSaleList.meta = meta
+                return journeys
+            }).catch(({ data }) => {
+                availableForSaleList.isLoading = false
+                return Promise.reject(JSON.parse(data.message))
+            })
+        }
+
+        async function availableForSaleUpdateParams(paramsNews) {
+            availableForSaleList.meta = {
+                ...availableForSaleList.meta,
+                ...paramsNews,
+            }
+            return availableForSaleGetAll()
+        }
+        async function availableForSaleListUpdatePerPage(per_page) {
+            availableForSaleList.meta.per_page = per_page
+            return availableForSaleGetAll()
+        }
+        async function availableForSaleListUpdatePage(page) {
+            availableForSaleList.meta.page = page
+            return availableForSaleGetAll()
+        }
+
         return {
             list,
             getAll,
@@ -225,6 +251,12 @@ export const useJourneyStore = defineStore(
             delete: deleteItem,
             createStatus,
             listToObject,
+
+            availableForSaleList,
+            availableForSaleGetAll,
+            availableForSaleUpdateParams,
+            availableForSaleListUpdatePerPage,
+            availableForSaleListUpdatePage,
         }
     },
 )

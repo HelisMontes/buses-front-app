@@ -1,14 +1,25 @@
 <template>
   <h1>Journey page</h1>
   <br />
+  <Form
+    name="journey-available-for-sale"
+
+    :structure="FORM_STRUCTURE"
+
+    @submit="submit"
+    submit-text="Buscar"
+
+    ref="form"
+  />
+  <br/>
   <br />
   <TableCustom
-    :data="list.data || []"
-    :meta="list.meta || {}"
+    :data="availableForSaleList.data || []"
+    :meta="availableForSaleList.meta || {}"
     :columns="COLUMNS"
     @update-data="getAll"
-    @update-per-page="updatePerPage"
-    @update-page="updatePage"
+    @update-per-page="availableForSaleListUpdatePerPage"
+    @update-page="availableForSaleListUpdatePage"
   >
     <template v-slot:callback="{ data, field, row }">
       <template v-if="field === 'status'">
@@ -23,12 +34,8 @@
       </template>
       <template v-else-if="field === 'actions'">
         <Button
-          text="Editar"
-          @click="edit(row)"
-        />
-        <Button
-          text="Eliminar"
-          @click="deleteItem(row)"
+          text="Comprar"
+          @click="toBuy(row)"
         />
       </template>
       <template v-else-if="field === 'origen'">
@@ -48,16 +55,6 @@
       </template>
     </template>
   </TableCustom>
-  <Form
-    name="journey"
-
-    :structure="FORM_STRUCTURE"
-
-    @submit="submit"
-
-    ref="form"
-  />
-  <br/>
 </template>
 
 <script setup>
@@ -68,30 +65,35 @@ import Image from '~/components/Image.vue'
 import Form from '~/components/Form.vue'
 
 import { useJourneyStore } from '@/stores/journey'
-import { useBusStore } from '@/stores/bus'
 import { useLocationStore } from '@/stores/location'
-import { useUserStore } from '@/stores/user'
 
 const journeyStore = useJourneyStore()
-const { list, createStatus } = storeToRefs(journeyStore)
-const { getAll, updatePerPage, updatePage, save } = journeyStore
-const { COLUMNS } = journeyStore.list
-
-const busStore = useBusStore()
-const { listAllToObject: busListAllToObject } = storeToRefs(busStore)
-const { getListAll: busGetListAll } = busStore
+const { availableForSaleList } = storeToRefs(journeyStore)
+const {
+  availableForSaleGetAll,
+  availableForSaleListUpdatePerPage,
+  availableForSaleListUpdatePage,
+  availableForSaleUpdateParams,
+} = journeyStore
+const { COLUMNS } = journeyStore.availableForSaleList
 
 const locationStore = useLocationStore()
 const { listAllToObject: locationListAllToObject } = storeToRefs(locationStore)
 const { getListAll: locationGetListAll } = locationStore
 
-const userStore = useUserStore()
-const { listAllToObject: userListAllToObject } = storeToRefs(userStore)
-const { getListAll: userGetListAll } = userStore
-
-await busGetListAll()
 await locationGetListAll()
-await userGetListAll()
+
+const router = useRouter()
+
+const route = useRoute()
+const {
+  page,
+  perPage,
+  start,
+  end,
+  origen,
+  destination,
+} = route.query
 
 const FORM_STRUCTURE = {
   origen_id: {
@@ -114,38 +116,7 @@ const FORM_STRUCTURE = {
     errors: [],
     component: 'FormInputDatalist',
   },
-  bus_id: {
-    label: 'Bus',
-    validations: [
-      { required: true, message: 'Este campo es requerido' },
-    ],
-    options: busListAllToObject.value,
-    value: '',
-    errors: [],
-    component: 'FormInputDatalist',
-  },
-  user_id: {
-    label: 'Usuario',
-    validations: [
-      { required: true, message: 'Este campo es requerido' },
-    ],
-    options: userListAllToObject.value,
-    value: '',
-    errors: [],
-    component: 'FormInputDatalist',
-  },
-  price: {
-    label: 'Precio',
-    validations: [
-      { required: true, message: 'Este campo es requerido' },
-      { min: 1, message: 'Mínimo 1' },
-      { max: 1000000000, message: 'Máximo 1000000000' },
-    ],
-    value: '',
-    errors: [],
-    component: 'FormInputNumeric',
-  },
-  datetime_start: {
+  start: {
     label: 'Fecha y hora de inicio',
     validations: [
       { required: true, message: 'Este campo es requerido' },
@@ -155,12 +126,12 @@ const FORM_STRUCTURE = {
     errors: [],
     component: 'FormInputDatetime',
   },
-  datetime_end: {
+  end: {
     label: 'Fecha y hora de fin',
     validations: [
       { required: true, message: 'Este campo es requerido' },
       {
-        moreThanField: 'datetime_start',
+        moreThanField: 'start',
         message: 'La fecha debe ser mayor a la de inicio',
       },
     ],
@@ -168,52 +139,33 @@ const FORM_STRUCTURE = {
     errors: [],
     component: 'FormInputDatetime',
   },
-  status: {
-    label: 'Estado',
-    validations: [
-      { required: true, message: 'Este campo es requerido' },
-    ],
-    value: undefined,
-    errors: [],
-    component: 'FormInputCheckbox',
-  },
 }
 
 const form = ref();
 const submit = async (values) => {
-  try {
-    await save(values)
-    form.value.reset(FORM_STRUCTURE)
-    await getAll()
-  } catch ({ message }) {
-    if (typeof message === 'object' ) {
-      form.value.setErrors(message)
-    }else{
-      message?.journey && alert(message.journey)
-    }
-  }
+  availableForSaleUpdateParams(values)
+  availableForSaleGetAll()
 }
-const edit = async (row) => {
-  form.value.setData(row)
-}
-const deleteItem = async (row) => {
-  try {
-    await journeyStore.delete({
-      id: row.id,
-    })
-    form.value.reset(FORM_STRUCTURE)
-    await getAll()
-  } catch ({ message }) {
-    if (typeof message === 'object' ) {
-      form.value.setErrors(message)
-    }else{
-      message?.journey && alert(message.journey)
-    }
-  }
+const toBuy = async (row) => {
+  router.push({
+    path: `buy/${row.id}`,
+  })
 }
 
 onMounted(() => {
-  getAll()
+  if (start && end && origen && destination) {
+    console.log('set params')
+    availableForSaleUpdateParams({
+      start,
+      end,
+      origen_id: origen,
+      destination_id: destination,
+    })
+    if (page && perPage) {
+      availableForSaleListUpdatePerPage(perPage)
+      availableForSaleListUpdatePage(page)
+    }
+    availableForSaleGetAll()
+  }
 })
-
 </script>

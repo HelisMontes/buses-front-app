@@ -1,8 +1,10 @@
 import { defineStore } from 'pinia'
 
 
+const model = 'user'
+
 export const useUserStore = defineStore(
-    'user-store',
+    `${model}-store`,
     () => {
         const list = reactive({
             isLoading: false,
@@ -66,6 +68,10 @@ export const useUserStore = defineStore(
                 },
             ]
         })
+        const listAll = reactive({
+            isLoading: false,
+            data: [],
+        })
 
         const createStatus = reactive({
             isLoading: false,
@@ -92,7 +98,7 @@ export const useUserStore = defineStore(
             })
             list.isLoading = true
             list.data = []
-            return $fetch(`/api/user/?${params}`, {
+            return $fetch(`/api/${model}/?${params}`, {
                 method: 'GET',
             }).then(({ data, message }) => {
                 list.isLoading = false
@@ -105,17 +111,42 @@ export const useUserStore = defineStore(
                 return Promise.reject(JSON.parse(data.message))
             })
         }
-        async function updatePerPage(per_page, { reload = true } = {}) {
-            list.meta.per_page = per_page
-            if (reload) {
-                getAll()
-            }
+        async function getListAll() {
+            const params = new URLSearchParams({
+                page: 'all',
+                per_page: 'all',
+            })
+            return $fetch(`/api/${model}/?${params}`, {
+                method: 'GET',
+            }).then(({ data, message }) => {
+                listAll.isLoading = false
+                const { list: users, meta } = data.users
+                listAll.data = users
+                listAll.meta = meta
+                return Promise.resolve(users)
+            }).catch(({ data }) => {
+                listAll.isLoading = false
+                return Promise.reject(JSON.parse(data.message))
+            })
         }
-        async function updatePage(page, { reload = true } = {}) {
+        const listAllToObject = computed(() => {
+            const { data } = listAll
+            const object = {}
+            data.forEach(item => {
+                object[item.id] = {
+                    label: item.identification + ' ' + item.name + ' ' + item.last_name,
+                    description: item.email + ' ' + item.phone + ' ' + item.birth_date,
+                }
+            })
+            return object
+        })
+        async function updatePerPage(per_page) {
+            list.meta.per_page = per_page
+            return getAll()
+        }
+        async function updatePage(page) {
             list.meta.page = page
-            if (reload) {
-                getAll()
-            }
+            return getAll()
         }
 
         async function save(data) {
@@ -176,6 +207,10 @@ export const useUserStore = defineStore(
             delete: deleteItem,
             createStatus,
             listToObject,
+
+            listAll,
+            getListAll,
+            listAllToObject,
         }
     },
 )
