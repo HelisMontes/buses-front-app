@@ -1,60 +1,62 @@
 <template>
-  <h1>Journey page</h1>
-  <br />
-  <Form
-    name="journey-available-for-sale"
+  <div>
+    <h1>Journey page</h1>
+    <br />
+    <Form
+      name="journey-available-for-sale"
 
-    :structure="FORM_STRUCTURE"
+      :structure="FORM_STRUCTURE"
 
-    @submit="submit"
-    submit-text="Buscar"
+      @submit="submit"
+      submit-text="Buscar"
 
-    ref="form"
-  />
-  <br/>
-  <br />
-  <TableCustom
-    :data="availableForSaleList.data || []"
-    :meta="availableForSaleList.meta || {}"
-    :columns="COLUMNS"
-    @update-data="getAll"
-    @update-per-page="availableForSaleListUpdatePerPage"
-    @update-page="availableForSaleListUpdatePage"
-  >
-    <template v-slot:callback="{ data, field, row }">
-      <template v-if="field === 'status'">
-        <span v-if="data">Activo</span>
-        <span v-else>Inactivo</span>
+      ref="form"
+    />
+    <br/>
+    <br />
+    <TableCustom
+      :data="list.data || []"
+      :meta="list.meta || {}"
+      :columns="COLUMNS"
+      @update-data="getAll"
+      @update-per-page="updatePerPage"
+      @update-page="updatePage"
+    >
+      <template v-slot:callback="{ data, field, row }">
+        <template v-if="field === 'status'">
+          <span v-if="data">Activo</span>
+          <span v-else>Inactivo</span>
+        </template>
+        <template v-else-if="field === 'image'">
+          <Image
+            :src="data"
+            alt="journey"
+          />
+        </template>
+        <template v-else-if="field === 'actions'">
+          <Button
+            text="Comprar"
+            @click="toBuy(row)"
+          />
+        </template>
+        <template v-else-if="field === 'origen'">
+          {{ data.country }} - {{ data.city }}
+        </template>
+        <template v-else-if="field === 'destination'">
+          {{ data.country }} - {{ data.city }}
+        </template>
+        <template v-else-if="field === 'bus'">
+          {{ data.plate }} - {{ data.brand }} - {{ data.model }}
+        </template>
+        <template v-else-if="field === 'user'">
+          {{ data.identification }} - {{ data.name }} {{ data.last_name }}
+        </template>
+        <template v-else>
+          {{ data }}
+        </template>
       </template>
-      <template v-else-if="field === 'image'">
-        <Image
-          :src="data"
-          alt="journey"
-        />
-      </template>
-      <template v-else-if="field === 'actions'">
-        <Button
-          text="Comprar"
-          @click="toBuy(row)"
-        />
-      </template>
-      <template v-else-if="field === 'origen'">
-        {{ data.country }} - {{ data.city }}
-      </template>
-      <template v-else-if="field === 'destination'">
-        {{ data.country }} - {{ data.city }}
-      </template>
-      <template v-else-if="field === 'bus'">
-        {{ data.plate }} - {{ data.brand }} - {{ data.model }}
-      </template>
-      <template v-else-if="field === 'user'">
-        {{ data.identification }} - {{ data.name }} {{ data.last_name }}
-      </template>
-      <template v-else>
-        {{ data }}
-      </template>
-    </template>
-  </TableCustom>
+    </TableCustom>
+  </div>
 </template>
 
 <script setup>
@@ -68,12 +70,12 @@ import { useJourneyStore } from '@/stores/journey'
 import { useLocationStore } from '@/stores/location'
 
 const journeyStore = useJourneyStore()
-const { availableForSaleList } = storeToRefs(journeyStore)
+const { availableForSaleList: list } = storeToRefs(journeyStore)
 const {
-  availableForSaleGetAll,
-  availableForSaleListUpdatePerPage,
-  availableForSaleListUpdatePage,
-  availableForSaleUpdateParams,
+  availableForSaleGetAll: getAll,
+  availableForSaleListUpdatePerPage: updatePerPage,
+  availableForSaleListUpdatePage: updatePage,
+  availableForSaleUpdateParams: updateParams,
 } = journeyStore
 const { COLUMNS } = journeyStore.availableForSaleList
 
@@ -143,8 +145,8 @@ const FORM_STRUCTURE = {
 
 const form = ref();
 const submit = async (values) => {
-  availableForSaleUpdateParams(values)
-  availableForSaleGetAll()
+  updateParams(values)
+  getAll()
 }
 const toBuy = async (row) => {
   router.push({
@@ -154,18 +156,17 @@ const toBuy = async (row) => {
 
 onMounted(() => {
   if (start && end && origen && destination) {
-    console.log('set params')
-    availableForSaleUpdateParams({
+    updateParams({
       start,
       end,
       origen_id: origen,
       destination_id: destination,
     })
     if (page && perPage) {
-      availableForSaleListUpdatePerPage(perPage)
-      availableForSaleListUpdatePage(page)
+      updatePerPage(perPage)
+      updatePage(page)
     }
-    availableForSaleGetAll()
+    getAll()
   }
 })
 </script>

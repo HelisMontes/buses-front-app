@@ -1,10 +1,10 @@
 <template>
   <div>
     <TheHeader/>
-  <!-- <SideBar/> -->
+    <SideBar/>
     <NuxtPage/>
+    <TheFooter/>
   </div>
-  <TheFooter/>
 </template>
 
 <script setup>

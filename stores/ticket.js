@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia'
 
 
-const model = 'user'
+const model = 'ticket'
 
-export const useUserStore = defineStore(
+export const useTicketStore = defineStore(
     `${model}-store`,
     () => {
         const list = reactive({
@@ -23,38 +23,18 @@ export const useUserStore = defineStore(
                     field: 'id',
                 },
                 {
-                    label: 'Documento',
-                    field: 'identification',
-                },
-                {
-                    label: 'Nombre',
-                    field: 'name',
-                },
-                {
-                    label: 'Apellido',
-                    field: 'last_name',
-                },
-                {
-                    label: 'Correo',
-                    field: 'email',
-                },
-                {
-                    label: 'Teléfono',
-                    field: 'phone',
-                },
-                {
-                    label: 'Fecha de cumpleaños',
-                    field: 'birth_date',
-                },
-                {
-                    label: 'Tipo de usuario',
-                    field: 'type_user',
+                    label: 'Usuario',
+                    field: 'user',
                     type: 'callback',
                 },
                 {
-                    label: 'Imagen',
-                    field: 'image',
+                    label: 'Viaje',
+                    field: 'journey',
                     type: 'callback',
+                },
+                {
+                    label: 'Número de asiento',
+                    field: 'number_seat',
                 },
                 {
                     label: 'Estado',
@@ -68,27 +48,11 @@ export const useUserStore = defineStore(
                 },
             ]
         })
-        const listAll = reactive({
-            isLoading: false,
-            data: [],
-        })
 
         const createStatus = reactive({
             isLoading: false,
             data: {},
             errors: {},
-        })
-
-        const listToObject = computed(() => {
-            const { data } = list
-            const object = {}
-            data.forEach(item => {
-                object[item.id] = {
-                    label: item.identification + ' ' + item.name + ' ' + item.last_name,
-                    description: item.email + ' ' + item.phone + ' ' + item.birth_date,
-                }
-            })
-            return object
         })
 
         async function getAll() {
@@ -102,48 +66,15 @@ export const useUserStore = defineStore(
                 method: 'GET',
             }).then(({ data, message }) => {
                 list.isLoading = false
-                const { list: users, meta } = data.users
-                list.data = users
+                const { list: tickets, meta } = data.tickets
+                list.data = tickets
                 list.meta = meta
-                return Promise.resolve(users)
+                return tickets
             }).catch(({ data }) => {
-                createStatus.isLoading = false
+                list.isLoading = false
                 return Promise.reject(JSON.parse(data.message))
             })
         }
-        async function getListAll({ filter = {} }) {
-            const customParams = {
-                page: 'all',
-                per_page: 'all',
-            }
-            for (const key in filter) {
-                customParams[key] = filter[key]
-            }
-            const params = new URLSearchParams(customParams)
-            return $fetch(`/api/${model}/?${params}`, {
-                method: 'GET',
-            }).then(({ data, message }) => {
-                listAll.isLoading = false
-                const { list: users, meta } = data.users
-                listAll.data = users
-                listAll.meta = meta
-                return Promise.resolve(users)
-            }).catch(({ data }) => {
-                listAll.isLoading = false
-                return Promise.reject(JSON.parse(data.message))
-            })
-        }
-        const listAllToObject = computed(() => {
-            const { data } = listAll
-            const object = {}
-            data.forEach(item => {
-                object[item.id] = {
-                    label: item.identification + ' ' + item.name + ' ' + item.last_name,
-                    description: item.email + ' ' + item.phone + ' ' + item.birth_date,
-                }
-            })
-            return object
-        })
         async function updatePerPage(per_page) {
             list.meta.per_page = per_page
             return getAll()
@@ -158,24 +89,24 @@ export const useUserStore = defineStore(
             createStatus.data = {}
             createStatus.errors = {}
             if(data.id) {
-                return $fetch(`/api/user/update`, {
+                return $fetch(`/api/${model}/update`, {
                     method: 'POST',
                     body: data,
                 }).then(({ data, message }) => {
                     createStatus.isLoading = false
-                    createStatus.data = data.user
+                    createStatus.data = data.ticket
                     return message || ''
                 }).catch(({ data }) => {
                     createStatus.isLoading = false
                     return Promise.reject(JSON.parse(data.message))
                 })
             }
-            return $fetch('/api/user/create', {
+            return $fetch(`/api/${model}/create`, {
                 method: 'POST',
                 body: data,
             }).then(({ data, message }) => {
                 createStatus.isLoading = false
-                createStatus.data = data.user
+                createStatus.data = data.ticket
                 createStatus.errors = {}
                 return message || ''
             }).catch(({ data }) => {
@@ -188,12 +119,12 @@ export const useUserStore = defineStore(
             createStatus.isLoading = true
             createStatus.data = {}
             createStatus.errors = {}
-            return $fetch('/api/user/delete', {
+            return $fetch(`/api/${model}/delete`, {
                 method: 'POST',
                 body: { id },
             }).then(({ data, message }) => {
                 createStatus.isLoading = false
-                createStatus.data = data.user
+                createStatus.data = data.journey
                 createStatus.errors = {}
                 return message || ''
             }).catch(({ data }) => {
@@ -210,11 +141,6 @@ export const useUserStore = defineStore(
             save,
             delete: deleteItem,
             createStatus,
-            listToObject,
-
-            listAll,
-            getListAll,
-            listAllToObject,
         }
     },
 )

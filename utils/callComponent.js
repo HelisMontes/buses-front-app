@@ -5,6 +5,7 @@ import FormInputCheckbox from '~/components/FormInputCheckbox.vue'
 import FormInputDate from '~/components/FormInputDate.vue'
 import FormInputDatalist from '~/components/FormInputDatalist.vue'
 import FormInputDatetime from '~/components/FormInputDatetime.vue'
+import FormSeatList from '~/components/FormSeatList.vue'
 
 
 export default {
@@ -35,5 +36,9 @@ export default {
   'FormInputDatetime': (props) => {
     delete props.component
     return h(FormInputDatetime, props, '')
+  },
+  'FormSeatList': (props) => {
+    delete props.component
+    return h(FormSeatList, props, '')
   }
 }

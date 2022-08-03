@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Journey page</h1>
+    <h1>Ticket page</h1>
     <br />
     <br />
     <TableCustom
@@ -16,12 +16,6 @@
           <span v-if="data">Activo</span>
           <span v-else>Inactivo</span>
         </template>
-        <template v-else-if="field === 'image'">
-          <Image
-            :src="data"
-            alt="journey"
-          />
-        </template>
         <template v-else-if="field === 'actions'">
           <Button
             text="Editar"
@@ -32,14 +26,13 @@
             @click="deleteItem(row)"
           />
         </template>
-        <template v-else-if="field === 'origen'">
-          {{ data.country }} - {{ data.city }}
-        </template>
-        <template v-else-if="field === 'destination'">
-          {{ data.country }} - {{ data.city }}
-        </template>
-        <template v-else-if="field === 'bus'">
-          {{ data.plate }} - {{ data.brand }} - {{ data.model }}
+        <template v-else-if="field === 'journey'">
+          Origen - Destino: {{ data.origen.country }} - {{ data.origen.city }} / {{ data.destination.country }} - {{ data.destination.city }}
+          <br/>
+          Bus: {{ data.bus.plate }} - {{ data.bus.brand }} - {{ data.bus.model }} - {{ data.bus.color }}
+          <br/>
+          Chofer: {{ data.user.identification }} - {{ data.user.name }} - {{ data.user.last_name }} - {{ data.user.email }} - {{ data.user.phone }}
+          <br/>
         </template>
         <template v-else-if="field === 'user'">
           {{ data.identification }} - {{ data.name }} {{ data.last_name }}
@@ -50,7 +43,7 @@
       </template>
     </TableCustom>
     <Form
-      name="journey"
+      name="ticket"
 
       :structure="FORM_STRUCTURE"
 
@@ -69,68 +62,32 @@ import TableCustom from '~/components/TableCustom.vue'
 import Image from '~/components/Image.vue'
 import Form from '~/components/Form.vue'
 
+import { useTicketStore } from '@/stores/ticket'
 import { useJourneyStore } from '@/stores/journey'
-import { useBusStore } from '@/stores/bus'
-import { useLocationStore } from '@/stores/location'
 import { useUserStore } from '@/stores/user'
 
+const ticketStore = useTicketStore()
+const { list, createStatus } = storeToRefs(ticketStore)
+const { getAll, updatePerPage, updatePage, save } = ticketStore
+const { COLUMNS } = ticketStore.list
+
 const journeyStore = useJourneyStore()
-const { list, createStatus } = storeToRefs(journeyStore)
-const { getAll, updatePerPage, updatePage, save } = journeyStore
-const { COLUMNS } = journeyStore.list
-
-const busStore = useBusStore()
-const { listAllToObject: busListAllToObject } = storeToRefs(busStore)
-const { getListAll: busGetListAll } = busStore
-
-const locationStore = useLocationStore()
-const { listAllToObject: locationListAllToObject } = storeToRefs(locationStore)
-const { getListAll: locationGetListAll } = locationStore
+const { listAllToObject: journeyListAllToObject } = storeToRefs(journeyStore)
+const { getListAll: journeyGetListAll } = journeyStore
 
 const userStore = useUserStore()
 const { listAllToObject: userListAllToObject } = storeToRefs(userStore)
 const { getListAll: userGetListAll } = userStore
 
-await busGetListAll()
-await locationGetListAll()
+await journeyGetListAll()
 await userGetListAll({
   filter: {
     filter_by: 'type_user',
-    filter_value: 'DRIV',
+    filter_value: 'PASS',
   }
 })
 
 const FORM_STRUCTURE = {
-  origen_id: {
-    label: 'Origen',
-    validations: [
-      { required: true, message: 'Este campo es requerido' },
-    ],
-    options: locationListAllToObject.value,
-    value: '',
-    errors: [],
-    component: 'FormInputDatalist',
-  },
-  destination_id: {
-    label: 'Destino',
-    validations: [
-      { required: true, message: 'Este campo es requerido' },
-    ],
-    options: locationListAllToObject.value,
-    value: '',
-    errors: [],
-    component: 'FormInputDatalist',
-  },
-  bus_id: {
-    label: 'Bus',
-    validations: [
-      { required: true, message: 'Este campo es requerido' },
-    ],
-    options: busListAllToObject.value,
-    value: '',
-    errors: [],
-    component: 'FormInputDatalist',
-  },
   user_id: {
     label: 'Usuario',
     validations: [
@@ -141,39 +98,26 @@ const FORM_STRUCTURE = {
     errors: [],
     component: 'FormInputDatalist',
   },
-  price: {
-    label: 'Precio',
+  journey_id: {
+    label: 'Viaje',
+    validations: [
+      { required: true, message: 'Este campo es requerido' },
+    ],
+    options: journeyListAllToObject.value,
+    value: '',
+    errors: [],
+    component: 'FormInputDatalist',
+  },
+  number_seat: {
+    label: 'Número de asiento',
     validations: [
       { required: true, message: 'Este campo es requerido' },
       { min: 1, message: 'Mínimo 1' },
-      { max: 1000000000, message: 'Máximo 1000000000' },
+      { max: 10, message: 'Máximo 10' },
     ],
     value: '',
     errors: [],
     component: 'FormInputNumeric',
-  },
-  datetime_start: {
-    label: 'Fecha y hora de inicio',
-    validations: [
-      { required: true, message: 'Este campo es requerido' },
-      { minDate: 'now', message: 'La fecha debe ser mayor a la actual' },
-    ],
-    value: '',
-    errors: [],
-    component: 'FormInputDatetime',
-  },
-  datetime_end: {
-    label: 'Fecha y hora de fin',
-    validations: [
-      { required: true, message: 'Este campo es requerido' },
-      {
-        moreThanField: 'datetime_start',
-        message: 'La fecha debe ser mayor a la de inicio',
-      },
-    ],
-    value: '',
-    errors: [],
-    component: 'FormInputDatetime',
   },
   status: {
     label: 'Estado',
@@ -196,7 +140,7 @@ const submit = async (values) => {
     if (typeof message === 'object' ) {
       form.value.setErrors(message)
     }else{
-      message?.journey && alert(message.journey)
+      message?.ticket && alert(message.ticket)
     }
   }
 }
@@ -205,7 +149,7 @@ const edit = async (row) => {
 }
 const deleteItem = async (row) => {
   try {
-    await journeyStore.delete({
+    await ticketStore.delete({
       id: row.id,
     })
     form.value.reset(FORM_STRUCTURE)
@@ -214,7 +158,7 @@ const deleteItem = async (row) => {
     if (typeof message === 'object' ) {
       form.value.setErrors(message)
     }else{
-      message?.journey && alert(message.journey)
+      message?.ticket && alert(message.ticket)
     }
   }
 }

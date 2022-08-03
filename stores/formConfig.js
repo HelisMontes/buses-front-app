@@ -7,11 +7,17 @@ export const useFormConfigStore = defineStore(
         const forms = reactive({})
 
         function setForm(key, { structure }) {
+            let structureCloned = { ...structure }
+            try {
+                structureCloned = structuredClone(structure)
+            }catch(e){
+                structureCloned = Object.assign({}, structure)
+            }
             if(!forms[key]) {
                 forms[key] = {}
             }
             forms[key].isValidated = false
-            forms[key].structure = structuredClone(structure)
+            forms[key].structure = structureCloned
         }
 
         function setValue(key, field, value) {
