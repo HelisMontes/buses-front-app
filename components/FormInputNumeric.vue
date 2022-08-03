@@ -1,21 +1,27 @@
 <template>
-  {{ label }}
-  <input
-    type="number"
-    :value="forms[store].structure[field].value"
-    @keyup="updateValue($event.target.value)"
-  />
-  <template
-    v-if="
-      forms[store].structure[field].errors.length &&
-      forms[store].structure[field].errors[0] &&
-      forms[store].isValidated
-    "
-  >
-    <div>
-      {{ forms[store].structure[field].errors }}
-    </div>
-  </template>
+  <div class="form-group">
+    <label :for="`label-${label}`">{{ label }}</label>
+    <input
+      type="number"
+      :value="forms[store].structure[field].value"
+      @keyup="updateValue($event.target.value)"
+      class="input-number"
+      :placeholder="label"
+    />
+    <template
+      v-if="
+        forms[store].structure[field].errors.length &&
+        forms[store].structure[field].errors[0] &&
+        forms[store].isValidated
+      "
+    >
+      <div class="message-error">
+        <span v-for="(error, key) in forms[store].structure[field].errors" :key="key">
+          {{ error }}
+        </span>
+      </div>
+    </template>
+  </div>
 </template>
 
 <script setup>
