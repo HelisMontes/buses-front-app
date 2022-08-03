@@ -1,12 +1,14 @@
 <template>
   <div class="form-group">
-    <label :for="`label-${label}`">{{ label }}</label>
-    <input
-      type="checkbox"
-      :checked="forms[store].structure[field].value"
-      :value="forms[store].structure[field].value"
-      @change="updateValue"
-    />
+    <div class="checkbox">
+      <label :for="`label-${label}`">{{ label }}</label>
+      <input
+        type="checkbox"
+        :checked="forms[store].structure[field].value"
+        :value="forms[store].structure[field].value"
+        @change="updateValue"
+      />
+    </div>
     <template
       v-if="
         forms[store].structure[field].errors.length &&
