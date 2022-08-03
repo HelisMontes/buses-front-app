@@ -154,7 +154,6 @@ const toBuy = async (row) => {
 
 onMounted(() => {
   if (start && end && origen && destination) {
-    console.log('set params')
     availableForSaleUpdateParams({
       start,
       end,
