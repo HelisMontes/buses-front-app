@@ -242,6 +242,54 @@ export const useJourneyStore = defineStore(
             return availableForSaleGetAll()
         }
 
+        const stateToBuy = reactive({
+            isLoading: true,
+            data: {
+                id: null,
+                tickets: [],
+                journey: {},
+            },
+            errors: {},
+        })
+        async function getToBuy({ id }) {
+            stateToBuy.isLoading = true
+            stateToBuy.data = {
+                id,
+                tickets: [],
+                journey: {},
+            }
+            return $fetch(`/api/journey/to_buy/${id}`, {
+                method: 'GET',
+            }).then(({ data, message }) => {
+                stateToBuy.isLoading = false
+                const { journey, tickets } = data
+                stateToBuy.data.journey = journey
+                stateToBuy.data.tickets = tickets
+                return stateToBuy.data
+            }).catch(({ data }) => {
+                stateToBuy.isLoading = false
+                return Promise.reject(data)
+            })
+        }
+
+        async function ticketCreate({ number_seat, user_id }) {
+            const body = {
+                number_seat,
+                user_id,
+                journey_id: stateToBuy.data.id,
+            }
+            return $fetch(`/api/ticket/create`, {
+                method: 'POST',
+                body,
+            }).then(({ data, message }) => {
+                stateToBuy.isLoading = false
+                return data.ticket
+            }).catch(({ data }) => {
+                stateToBuy.isLoading = false
+                return Promise.reject(data)
+            })
+        }
+
         return {
             list,
             getAll,
@@ -257,6 +305,11 @@ export const useJourneyStore = defineStore(
             availableForSaleUpdateParams,
             availableForSaleListUpdatePerPage,
             availableForSaleListUpdatePage,
+
+            stateToBuy,
+            getToBuy,
+
+            ticketCreate,
         }
     },
 )

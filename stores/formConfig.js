@@ -11,7 +11,7 @@ export const useFormConfigStore = defineStore(
                 forms[key] = {}
             }
             forms[key].isValidated = false
-            forms[key].structure = structuredClone(structure)
+            forms[key].structure = Object.assign({}, structure)
         }
 
         function setValue(key, field, value) {

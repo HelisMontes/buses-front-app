@@ -111,11 +111,15 @@ export const useUserStore = defineStore(
                 return Promise.reject(JSON.parse(data.message))
             })
         }
-        async function getListAll() {
-            const params = new URLSearchParams({
+        async function getListAll({ filter = {} }) {
+            const customParams = {
                 page: 'all',
                 per_page: 'all',
-            })
+            }
+            for (const key in filter) {
+                customParams[key] = filter[key]
+            }
+            const params = new URLSearchParams(customParams)
             return $fetch(`/api/${model}/?${params}`, {
                 method: 'GET',
             }).then(({ data, message }) => {

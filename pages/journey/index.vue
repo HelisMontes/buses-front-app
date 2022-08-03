@@ -91,7 +91,12 @@ const { getListAll: userGetListAll } = userStore
 
 await busGetListAll()
 await locationGetListAll()
-await userGetListAll()
+await userGetListAll({
+  filter: {
+    filter_by: 'type_user',
+    filter_value: 'DRIV',
+  }
+})
 
 const FORM_STRUCTURE = {
   origen_id: {
