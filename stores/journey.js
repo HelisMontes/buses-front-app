@@ -412,6 +412,61 @@ export const useJourneyStore = defineStore(
             return object
         })
 
+        const averagePassengersList = reactive({
+            isLoading: false,
+            data: [],
+            meta: {
+                page: 0,
+                per_page: 10,
+                total_items: 10,
+                prev_page: null,
+                next_page: null,
+                last_page: 1,
+                average_sold: 0,
+            },
+            COLUMNS: [
+                {
+                    label: 'Promedio de tiempo de viaje (en segundos)',
+                    field: 'range',
+                },
+                {
+                    label: 'Viaje',
+                    field: 'name',
+                },
+                {
+                    label: 'Promedio de pasajeros %',
+                    field: 'passengers_average',
+                },
+            ]
+        })
+        async function averagePassengersGetAll() {
+            const params = new URLSearchParams({
+                ...averagePassengersList.meta,
+            })
+            averagePassengersList.isLoading = true
+            averagePassengersList.data = []
+            return $fetch(`/api/journey/average_passengers?${params}`, {
+                method: 'GET',
+            }).then(({ data, message }) => {
+                averagePassengersList.isLoading = false
+                const { list: journeys, meta } = data.journeys
+                averagePassengersList.data = journeys
+                averagePassengersList.meta = meta
+                return journeys
+            }).catch(({ data }) => {
+                averagePassengersList.isLoading = false
+                return Promise.reject(data)
+            })
+        }
+        async function averagePassengersListUpdatePerPage(per_page) {
+            averagePassengersList.meta.per_page = per_page
+            return averagePassengersGetAll()
+        }
+        async function averagePassengersListUpdatePage(page) {
+            averagePassengersList.meta.page = page
+            return averagePassengersGetAll()
+        }
+
         return {
             list,
             getAll,
@@ -442,6 +497,11 @@ export const useJourneyStore = defineStore(
             listAll,
             listAllToObject,
             getListAll,
+
+            averagePassengersList,
+            averagePassengersGetAll,
+            averagePassengersListUpdatePerPage,
+            averagePassengersListUpdatePage,
         }
     },
 )
