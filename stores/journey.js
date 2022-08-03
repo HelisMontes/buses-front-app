@@ -100,7 +100,7 @@ export const useJourneyStore = defineStore(
                 return journeys
             }).catch(({ data }) => {
                 list.isLoading = false
-                return Promise.reject(JSON.parse(data.message))
+                return Promise.reject({})
             })
         }
         async function updatePerPage(per_page) {

@@ -1,7 +1,7 @@
 <template>
   <div>
     <TheHeader/>
-    <SideBar/>
+    <!-- <SideBar/> -->
     <NuxtPage/>
     <TheFooter/>
   </div>
