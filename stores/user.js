@@ -23,31 +23,31 @@ export const useUserStore = defineStore(
                     field: 'id',
                 },
                 {
-                    label: 'identification',
+                    label: 'Documento',
                     field: 'identification',
                 },
                 {
-                    label: 'name',
+                    label: 'Nombre',
                     field: 'name',
                 },
                 {
-                    label: 'last_name',
+                    label: 'Apellido',
                     field: 'last_name',
                 },
                 {
-                    label: 'email',
+                    label: 'Correo',
                     field: 'email',
                 },
                 {
-                    label: 'phone',
+                    label: 'Teléfono',
                     field: 'phone',
                 },
                 {
-                    label: 'birth_date',
+                    label: 'Fecha de cumpleaños',
                     field: 'birth_date',
                 },
                 {
-                    label: 'type_user',
+                    label: 'Tipo de usuario',
                     field: 'type_user',
                     type: 'callback',
                 },

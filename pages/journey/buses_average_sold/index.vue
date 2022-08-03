@@ -1,51 +1,52 @@
 <template>
-  <h1>Buses porcentaje de tickets vendidos </h1>
-  <br />
-  <br />
-  <TableCustom
-    :data="busesAverageSoldList.data || []"
-    :meta="busesAverageSoldList.meta || {}"
-    :columns="COLUMNS"
-    @update-data="busesAverageSoldGetAll"
-    @update-per-page="busesAverageSoldListUpdatePerPage"
-    @update-page="busesAverageSoldListUpdatePage"
-  >
-    <template v-slot:callback="{ data, field, row }">
-      <template v-if="field === 'status'">
-        <span v-if="data">Activo</span>
-        <span v-else>Inactivo</span>
+  <div>
+    <h1>Buses porcentaje de tickets vendidos </h1>
+    <br />
+    <br />
+    <TableCustom
+      :data="busesAverageSoldList.data || []"
+      :meta="busesAverageSoldList.meta || {}"
+      :columns="COLUMNS"
+      @update-data="busesAverageSoldGetAll"
+      @update-per-page="busesAverageSoldListUpdatePerPage"
+      @update-page="busesAverageSoldListUpdatePage"
+    >
+      <template v-slot:callback="{ data, field, row }">
+        <template v-if="field === 'status'">
+          <span v-if="data">Activo</span>
+          <span v-else>Inactivo</span>
+        </template>
+        <template v-else-if="field === 'image'">
+          <Image
+            :src="data"
+            alt="bus"
+          />
+        </template>
+        <template v-else-if="field === 'actions'">
+          <Button
+            text="Editar"
+            @click="edit(row)"
+          />
+          <Button
+            text="Eliminar"
+            @click="deleteItem(row)"
+          />
+        </template>
+        <template v-else>
+          {{ data }}
+        </template>
       </template>
-      <template v-else-if="field === 'image'">
-        <Image
-          :src="data"
-          alt="bus"
-        />
-      </template>
-      <template v-else-if="field === 'actions'">
-        <Button
-          text="Editar"
-          @click="edit(row)"
-        />
-        <Button
-          text="Eliminar"
-          @click="deleteItem(row)"
-        />
-      </template>
-      <template v-else>
-        {{ data }}
-      </template>
-    </template>
-  </TableCustom>
-  <Form
-    name="busesAverageSold"
+    </TableCustom>
+    <Form
+      name="busesAverageSold"
 
-    :structure="FORM_STRUCTURE"
+      :structure="FORM_STRUCTURE"
 
-    @submit="submit"
+      @submit="submit"
 
-    ref="form"
-  />
-  <br/>
+      ref="form"
+    />
+  </div>
 </template>
 
 <script setup>

@@ -1,51 +1,55 @@
 <template>
-  <h1>User page</h1>
-  <br />
-  <br />
-  <TableCustom
-    :data="list.data || []"
-    :meta="list.meta || {}"
-    :columns="COLUMNS"
-    @update-data="getAll"
-    @update-per-page="updatePerPage"
-    @update-page="updatePage"
-  >
-    <template v-slot:callback="{ data, field, row }">
-      <template v-if="field === 'status'">
-        <span v-if="data">Activo</span>
-        <span v-else>Inactivo</span>
+  <div>
+    <h1>User page</h1>
+    <br />
+    <br />
+    <TableCustom
+      :data="list.data || []"
+      :meta="list.meta || {}"
+      :columns="COLUMNS"
+      @update-data="getAll"
+      @update-per-page="updatePerPage"
+      @update-page="updatePage"
+    >
+      <template v-slot:callback="{ data, field, row }">
+        <template v-if="field === 'status'">
+          <span v-if="data">Activo</span>
+          <span v-else>Inactivo</span>
+        </template>
+        <template v-else-if="field === 'image'">
+          <Image
+            :src="data"
+            alt="user"
+          />
+        </template>
+        <template v-else-if="field === 'actions'">
+          <Button
+            text="Editar"
+            @click="edit(row)"
+          />
+          <Button
+            text="Eliminar"
+            @click="deleteItem(row)"
+          />
+        </template>
+        <template v-else-if="field === 'type_user'">
+          {{ TYPE_USER[data] || '-' }}
+        </template>
+        <template v-else>
+          {{ data }}
+        </template>
       </template>
-      <template v-else-if="field === 'image'">
-        <Image
-          :src="data"
-          alt="user"
-        />
-      </template>
-      <template v-else-if="field === 'actions'">
-        <Button
-          text="Editar"
-          @click="edit(row)"
-        />
-        <Button
-          text="Eliminar"
-          @click="deleteItem(row)"
-        />
-      </template>
-      <template v-else>
-        {{ data }}
-      </template>
-    </template>
-  </TableCustom>
-  <Form
-    name="user"
+    </TableCustom>
+    <Form
+      name="user"
 
-    :structure="FORM_STRUCTURE"
+      :structure="FORM_STRUCTURE"
 
-    @submit="submit"
+      @submit="submit"
 
-    ref="form"
-  />
-  <br/>
+      ref="form"
+    />
+  </div>
 </template>
 
 <script setup>
@@ -60,6 +64,11 @@ const userStore = useUserStore()
 const { list, createStatus } = storeToRefs(userStore)
 const { getAll, updatePerPage, updatePage, save } = userStore
 const { COLUMNS } = userStore.list
+
+const TYPE_USER = {
+  'DRIV': 'Chofer',
+  'PASS': 'Pasajero',
+}
 
 const FORM_STRUCTURE = {
   identification: {

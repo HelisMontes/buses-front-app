@@ -1,56 +1,58 @@
 <template>
-  <h1>Ticket page</h1>
-  <br />
-  <br />
-  <TableCustom
-    :data="list.data || []"
-    :meta="list.meta || {}"
-    :columns="COLUMNS"
-    @update-data="getAll"
-    @update-per-page="updatePerPage"
-    @update-page="updatePage"
-  >
-    <template v-slot:callback="{ data, field, row }">
-      <template v-if="field === 'status'">
-        <span v-if="data">Activo</span>
-        <span v-else>Inactivo</span>
+  <div>
+    <h1>Ticket page</h1>
+    <br />
+    <br />
+    <TableCustom
+      :data="list.data || []"
+      :meta="list.meta || {}"
+      :columns="COLUMNS"
+      @update-data="getAll"
+      @update-per-page="updatePerPage"
+      @update-page="updatePage"
+    >
+      <template v-slot:callback="{ data, field, row }">
+        <template v-if="field === 'status'">
+          <span v-if="data">Activo</span>
+          <span v-else>Inactivo</span>
+        </template>
+        <template v-else-if="field === 'actions'">
+          <Button
+            text="Editar"
+            @click="edit(row)"
+          />
+          <Button
+            text="Eliminar"
+            @click="deleteItem(row)"
+          />
+        </template>
+        <template v-else-if="field === 'journey'">
+          Origen - Destino: {{ data.origen.country }} - {{ data.origen.city }} / {{ data.destination.country }} - {{ data.destination.city }}
+          <br/>
+          Bus: {{ data.bus.plate }} - {{ data.bus.brand }} - {{ data.bus.model }} - {{ data.bus.color }}
+          <br/>
+          Chofer: {{ data.user.identification }} - {{ data.user.name }} - {{ data.user.last_name }} - {{ data.user.email }} - {{ data.user.phone }}
+          <br/>
+        </template>
+        <template v-else-if="field === 'user'">
+          {{ data.identification }} - {{ data.name }} {{ data.last_name }}
+        </template>
+        <template v-else>
+          {{ data }}
+        </template>
       </template>
-      <template v-else-if="field === 'actions'">
-        <Button
-          text="Editar"
-          @click="edit(row)"
-        />
-        <Button
-          text="Eliminar"
-          @click="deleteItem(row)"
-        />
-      </template>
-      <template v-else-if="field === 'journey'">
-        Origen - Destino: {{ data.origen.country }} - {{ data.origen.city }} / {{ data.destination.country }} - {{ data.destination.city }}
-        <br/>
-        Bus: {{ data.bus.plate }} - {{ data.bus.brand }} - {{ data.bus.model }} - {{ data.bus.color }}
-        <br/>
-        Chofer: {{ data.user.identification }} - {{ data.user.name }} - {{ data.user.last_name }} - {{ data.user.email }} - {{ data.user.phone }}
-        <br/>
-      </template>
-      <template v-else-if="field === 'user'">
-        {{ data.identification }} - {{ data.name }} {{ data.last_name }}
-      </template>
-      <template v-else>
-        {{ data }}
-      </template>
-    </template>
-  </TableCustom>
-  <Form
-    name="ticket"
+    </TableCustom>
+    <Form
+      name="ticket"
 
-    :structure="FORM_STRUCTURE"
+      :structure="FORM_STRUCTURE"
 
-    @submit="submit"
+      @submit="submit"
 
-    ref="form"
-  />
-  <br/>
+      ref="form"
+    />
+    <br/>
+  </div>
 </template>
 
 <script setup>
