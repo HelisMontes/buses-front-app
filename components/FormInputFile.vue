@@ -1,27 +1,29 @@
 <template>
-  {{ label }}
-  <input
-    type="file"
-    @input="updateValue"
-    ref="file"
-  />
-  <Image
-    v-if="forms[store].structure[field].type === 'image' && forms[store].structure[field].fileOld"
-    :src="forms[store].structure[field].fileOld"
-  />
-  <template
-    v-if="
-      forms[store].structure[field].errors.length &&
-      forms[store].structure[field].errors[0] &&
-      forms[store].isValidated
-    "
-  >
-    <div class="message-error">
-      <span v-for="(error, key) in forms[store].structure[field].errors" :key="key">
-        {{ error }}
-      </span>
-    </div>
-  </template>
+  <div class="form-group">
+    <label :for="`label-${label}`">{{ label }}</label>
+    <input
+      type="file"
+      @input="updateValue"
+      ref="file"
+    />
+    <Image
+      v-if="forms[store].structure[field].type === 'image' && forms[store].structure[field].fileOld"
+      :src="forms[store].structure[field].fileOld"
+    />
+    <template
+      v-if="
+        forms[store].structure[field].errors.length &&
+        forms[store].structure[field].errors[0] &&
+        forms[store].isValidated
+      "
+    >
+      <div class="message-error">
+        <span v-for="(error, key) in forms[store].structure[field].errors" :key="key">
+          {{ error }}
+        </span>
+      </div>
+    </template>
+  </div>
 </template>
 
 <script setup>
