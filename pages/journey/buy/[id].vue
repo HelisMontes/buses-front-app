@@ -1,21 +1,22 @@
 <template>
-  <h1>Journey page</h1>
-  <br />
-  Journey id: {{ stateToBuy.data.id }}
-  <br />
+  <div>
+    <h1>Journey page</h1>
+    <br />
+    Journey id: {{ stateToBuy.data.id }}
+    <br />
 
-  <Form
-    name="toBuy"
+    <Form
+      name="toBuy"
 
-    :structure="FORM_STRUCTURE"
+      :structure="FORM_STRUCTURE"
 
-    @submit="submit"
-    submit-text="Comprar"
+      @submit="submit"
+      submit-text="Comprar"
 
-    ref="form"
-  />
-  <br/>
-  
+      ref="form"
+    />
+    <br/>
+  </div>
 </template>
 
 <script setup>

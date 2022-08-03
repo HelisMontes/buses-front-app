@@ -1,8 +1,10 @@
 <template>
-  <TheHeader/>
-  <SideBar/>
-  <NuxtPage/>
-  <TheFooter/>
+  <div>
+    <TheHeader/>
+    <SideBar/>
+    <NuxtPage/>
+    <TheFooter/>
+  </div>
 </template>
 
 <script setup>

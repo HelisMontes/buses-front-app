@@ -1,15 +1,17 @@
 <template>
-  <h1>Promedio de pasajeros</h1>
-  <br />
-  <br />
-  <TableCustom
-    :data="list.data || []"
-    :meta="list.meta || {}"
-    :columns="COLUMNS"
-    @update-data="getAll"
-    @update-per-page="listUpdatePerPage"
-    @update-page="listUpdatePage"
-  />
+  <div>
+    <h1>Promedio de pasajeros</h1>
+    <br />
+    <br />
+    <TableCustom
+      :data="list.data || []"
+      :meta="list.meta || {}"
+      :columns="COLUMNS"
+      @update-data="getAll"
+      @update-per-page="listUpdatePerPage"
+      @update-page="listUpdatePage"
+    />
+  </div>
 </template>
 
 <script setup>

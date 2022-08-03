@@ -1,51 +1,53 @@
 <template>
-  <h1>Bus page</h1>
-  <br />
-  <br />
-  <TableCustom
-    :data="list.data || []"
-    :meta="list.meta || {}"
-    :columns="COLUMNS"
-    @update-data="getAll"
-    @update-per-page="updatePerPage"
-    @update-page="updatePage"
-  >
-    <template v-slot:callback="{ data, field, row }">
-      <template v-if="field === 'status'">
-        <span v-if="data">Activo</span>
-        <span v-else>Inactivo</span>
+  <div>
+    <h1>Bus page</h1>
+    <br />
+    <br />
+    <TableCustom
+      :data="list.data || []"
+      :meta="list.meta || {}"
+      :columns="COLUMNS"
+      @update-data="getAll"
+      @update-per-page="updatePerPage"
+      @update-page="updatePage"
+    >
+      <template v-slot:callback="{ data, field, row }">
+        <template v-if="field === 'status'">
+          <span v-if="data">Activo</span>
+          <span v-else>Inactivo</span>
+        </template>
+        <template v-else-if="field === 'image'">
+          <Image
+            :src="data"
+            alt="bus"
+          />
+        </template>
+        <template v-else-if="field === 'actions'">
+          <Button
+            text="Editar"
+            @click="edit(row)"
+          />
+          <Button
+            text="Eliminar"
+            @click="deleteItem(row)"
+          />
+        </template>
+        <template v-else>
+          {{ data }}
+        </template>
       </template>
-      <template v-else-if="field === 'image'">
-        <Image
-          :src="data"
-          alt="bus"
-        />
-      </template>
-      <template v-else-if="field === 'actions'">
-        <Button
-          text="Editar"
-          @click="edit(row)"
-        />
-        <Button
-          text="Eliminar"
-          @click="deleteItem(row)"
-        />
-      </template>
-      <template v-else>
-        {{ data }}
-      </template>
-    </template>
-  </TableCustom>
-  <Form
-    name="bus"
+    </TableCustom>
+    <Form
+      name="bus"
 
-    :structure="FORM_STRUCTURE"
+      :structure="FORM_STRUCTURE"
 
-    @submit="submit"
+      @submit="submit"
 
-    ref="form"
-  />
-  <br/>
+      ref="form"
+    />
+    <br/>
+  </div>
 </template>
 
 <script setup>
