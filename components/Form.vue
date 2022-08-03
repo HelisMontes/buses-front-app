@@ -27,7 +27,7 @@
     </template>
     <br/>
     <Button
-      text="Guardar"
+      :text="submitText"
       @click="submit"
     />
   </form>
@@ -61,6 +61,10 @@ const {
     default() {
       return {}
     }
+  },
+  submitText: {
+    type: String,
+    default: 'Guardar',
   },
 })
 

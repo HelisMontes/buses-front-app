@@ -1,8 +1,10 @@
 import { defineStore } from 'pinia'
 
 
+const model = 'location'
+
 export const useLocationStore = defineStore(
-    'location-store',
+    `${model}-store`,
     () => {
         const list = reactive({
             isLoading: false,
@@ -45,6 +47,10 @@ export const useLocationStore = defineStore(
                 },
             ]
         })
+        const listAll = reactive({
+            isLoading: false,
+            data: [],
+        })
 
         const listToObject = computed(() => {
             const { data } = list
@@ -70,7 +76,7 @@ export const useLocationStore = defineStore(
             })
             list.isLoading = true
             list.data = []
-            return $fetch(`/api/location/?${params}`, {
+            return $fetch(`/api/${model}/?${params}`, {
                 method: 'GET',
             }).then(({ data, message }) => {
                 list.isLoading = false
@@ -83,17 +89,41 @@ export const useLocationStore = defineStore(
                 return Promise.reject(JSON.parse(data.message))
             })
         }
-        async function updatePerPage(per_page, { reload = true } = {}) {
-            list.meta.per_page = per_page
-            if (reload) {
-                getAll()
-            }
+        async function getListAll() {
+            const params = new URLSearchParams({
+                page: 'all',
+                per_page: 'all',
+            })
+            return $fetch(`/api/${model}/?${params}`, {
+                method: 'GET',
+            }).then(({ data, message }) => {
+                listAll.isLoading = false
+                const { list: locations, meta } = data.locations
+                listAll.data = locations
+                listAll.meta = meta
+                return Promise.resolve(locations)
+            }).catch(({ data }) => {
+                listAll.isLoading = false
+                return Promise.reject(JSON.parse(data.message))
+            })
         }
-        async function updatePage(page, { reload = true } = {}) {
+        const listAllToObject = computed(() => {
+            const { data } = listAll
+            const object = {}
+            data.forEach(item => {
+                object[item.id] = {
+                    label: item.country + ' ' + item.city,
+                }
+            })
+            return object
+        })
+        async function updatePerPage(per_page) {
+            list.meta.per_page = per_page
+            return getAll()
+        }
+        async function updatePage(page) {
             list.meta.page = page
-            if (reload) {
-                getAll()
-            }
+            return getAll()
         }
 
         async function save(data) {
@@ -154,6 +184,10 @@ export const useLocationStore = defineStore(
             delete: deleteItem,
             createStatus,
             listToObject,
+
+            listAll,
+            getListAll,
+            listAllToObject,
         }
     },
 )

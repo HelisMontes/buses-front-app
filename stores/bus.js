@@ -1,8 +1,10 @@
 import { defineStore } from 'pinia'
 
 
+const model = 'bus'
+
 export const useBusStore = defineStore(
-    'bus-store',
+    `${model}-store`,
     () => {
         const list = reactive({
             isLoading: false,
@@ -57,6 +59,10 @@ export const useBusStore = defineStore(
                 },
             ]
         })
+        const listAll = reactive({
+            isLoading: false,
+            data: [],
+        })
 
         const createStatus = reactive({
             isLoading: false,
@@ -83,7 +89,7 @@ export const useBusStore = defineStore(
             })
             list.isLoading = true
             list.data = []
-            return $fetch(`/api/bus/?${params}`, {
+            return $fetch(`/api/${model}/?${params}`, {
                 method: 'GET',
             }).then(({ data, message }) => {
                 list.isLoading = false
@@ -96,17 +102,42 @@ export const useBusStore = defineStore(
                 return Promise.reject(JSON.parse(data.message))
             })
         }
-        async function updatePerPage(per_page, { reload = true } = {}) {
-            list.meta.per_page = per_page
-            if (reload) {
-                getAll()
-            }
+        async function getListAll() {
+            const params = new URLSearchParams({
+                page: 'all',
+                per_page: 'all',
+            })
+            return $fetch(`/api/${model}/?${params}`, {
+                method: 'GET',
+            }).then(({ data, message }) => {
+                listAll.isLoading = false
+                const { list: buses, meta } = data.buses
+                listAll.data = buses
+                listAll.meta = meta
+                return Promise.resolve(buses)
+            }).catch(({ data }) => {
+                listAll.isLoading = false
+                return Promise.reject(JSON.parse(data.message))
+            })
         }
-        async function updatePage(page, { reload = true } = {}) {
+        const listAllToObject = computed(() => {
+            const { data } = listAll
+            const object = {}
+            data.forEach(item => {
+                object[item.id] = {
+                    label: item.plate + ' ' + item.brand + ' ' + item.model,
+                    description: item.color + ' ' + item.year,
+                }
+            })
+            return object
+        })
+        async function updatePerPage(per_page) {
+            list.meta.per_page = per_page
+            return getAll()
+        }
+        async function updatePage(page) {
             list.meta.page = page
-            if (reload) {
-                getAll()
-            }
+            return getAll()
         }
 
         async function save(data) {
@@ -114,13 +145,13 @@ export const useBusStore = defineStore(
             createStatus.data = {}
             createStatus.errors = {}
             if(data.id) {
-                return $fetch(`/api/bus/update`, {
+                return $fetch(`/api/${model}/update`, {
                     method: 'POST',
                     body: data,
                 }).then(({ data, message }) => {
                     createStatus.isLoading = false
                     createStatus.data = data.bus
-                    return message || ''
+                    return data
                 }).catch(({ data }) => {
                     createStatus.isLoading = false
                     return Promise.reject(JSON.parse(data.message))
@@ -144,14 +175,14 @@ export const useBusStore = defineStore(
             createStatus.isLoading = true
             createStatus.data = {}
             createStatus.errors = {}
-            return $fetch('/api/bus/delete', {
+            return $fetch(`/api/${model}/delete`, {
                 method: 'POST',
                 body: { id },
             }).then(({ data, message }) => {
                 createStatus.isLoading = false
                 createStatus.data = data.bus
                 createStatus.errors = {}
-                return message || ''
+                return data
             }).catch(({ data }) => {
                 createStatus.isLoading = false
                 return Promise.reject(JSON.parse(data.message))
@@ -167,6 +198,10 @@ export const useBusStore = defineStore(
             delete: deleteItem,
             createStatus,
             listToObject,
+
+            listAll,
+            getListAll,
+            listAllToObject,
         }
     },
 )
