@@ -1,5 +1,5 @@
 <template>
-  <div>
-    TheFooter
-  </div>
+  <footer>
+    © Agosto 2022 BUSTACAME. Todos los derechos reservados.
+  </footer>
 </template>

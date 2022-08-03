@@ -1,0 +1,43 @@
+body
+  box-sizing: border-box
+  margin: 0
+  padding: 0
+
+#__nuxt
+  display: flex
+  flex-direction: column
+  justify-content: space-between
+  min-height: 100vh
+
+.container__header
+  align-items: center
+  background-color: $purple
+  display: flex
+  height: 60px
+  justify-content: space-between
+  padding: 10px 20px
+  .logo
+    span
+      font-family: $font-logo
+      text-transform: uppercase
+
+.container__hero
+  position: relative
+  img
+    aspect-ratio: 16 / 4
+    object-fit: cover
+    width: 100%
+  h1
+    color: $white
+    font-size: $title-h1
+    left: 50%
+    position: absolute
+    top: 20%
+    transform: translateX(-50%)
+
+footer
+  background-color: $purple-dark
+  color: $white
+  margin-top: auto
+  padding: 15px 20px
+  text-align: center
