@@ -68,8 +68,11 @@ const {
 } = journeyStore
 const { COLUMNS } = journeyStore.busesAverageSoldList
 
-
-await journeyGetListAll()
+try{
+  await journeyGetListAll()
+} catch (error) {
+  console.log(error)
+}
 
 const FORM_STRUCTURE = {
   average_sold: {

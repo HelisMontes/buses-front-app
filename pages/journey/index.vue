@@ -94,14 +94,26 @@ const userStore = useUserStore()
 const { listAllToObject: userListAllToObject } = storeToRefs(userStore)
 const { getListAll: userGetListAll } = userStore
 
-await busGetListAll()
-await locationGetListAll()
-await userGetListAll({
-  filter: {
-    filter_by: 'type_user',
-    filter_value: 'DRIV',
-  }
-})
+try {
+  await busGetListAll()
+} catch (error) {
+  console.log(error)  
+}
+try{
+  await locationGetListAll()
+} catch (error) {
+  console.log(error)
+}
+try {
+  await userGetListAll({
+    filter: {
+      filter_by: 'type_user',
+      filter_value: 'DRIV',
+    }
+  })
+} catch (error) {
+  console.log(error)
+}
 
 const FORM_STRUCTURE = {
   origen_id: {
