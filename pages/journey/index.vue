@@ -76,7 +76,9 @@ import { useJourneyStore } from '@/stores/journey'
 import { useBusStore } from '@/stores/bus'
 import { useLocationStore } from '@/stores/location'
 import { useUserStore } from '@/stores/user'
+import alerts from '~/utils/alerts'
 
+const alert = alerts()
 const journeyStore = useJourneyStore()
 const { list, createStatus } = storeToRefs(journeyStore)
 const { getAll, updatePerPage, updatePage, save } = journeyStore
@@ -206,12 +208,17 @@ const submit = async (values) => {
   try {
     await save(values)
     form.value.reset(FORM_STRUCTURE)
+    alert.fire.success({
+      text: 'Guardado correctamente',
+    })
     await getAll()
   } catch ({ message }) {
     if (typeof message === 'object' ) {
       form.value.setErrors(message)
     }else{
-      message?.journey && alert(message.journey)
+      message?.journey && alert.fire.error({
+        text: message.journey,
+      })
     }
   }
 }
@@ -224,12 +231,17 @@ const deleteItem = async (row) => {
       id: row.id,
     })
     form.value.reset(FORM_STRUCTURE)
+    alert.fire.success({
+      text: 'Eliminado correctamente',
+    })
     await getAll()
   } catch ({ message }) {
     if (typeof message === 'object' ) {
       form.value.setErrors(message)
     }else{
-      message?.journey && alert(message.journey)
+      message?.journey && alert.fire.error({
+        text: message.journey,
+      })
     }
   }
 }

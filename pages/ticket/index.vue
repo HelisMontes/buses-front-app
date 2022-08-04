@@ -65,7 +65,9 @@ import Form from '~/components/Form.vue'
 import { useTicketStore } from '@/stores/ticket'
 import { useJourneyStore } from '@/stores/journey'
 import { useUserStore } from '@/stores/user'
+import alerts from '~/utils/alerts'
 
+const alert = alerts()
 const ticketStore = useTicketStore()
 const { list, createStatus } = storeToRefs(ticketStore)
 const { getAll, updatePerPage, updatePage, save } = ticketStore
@@ -143,12 +145,17 @@ const submit = async (values) => {
   try {
     await save(values)
     form.value.reset(FORM_STRUCTURE)
+    alert.fire.success({
+      text: 'Guardado correctamente',
+    })
     await getAll()
   } catch ({ message }) {
     if (typeof message === 'object' ) {
       form.value.setErrors(message)
     }else{
-      message?.ticket && alert(message.ticket)
+      message?.ticket && alert.fire.error({
+        text: message.ticket,
+      })
     }
   }
 }
@@ -161,12 +168,17 @@ const deleteItem = async (row) => {
       id: row.id,
     })
     form.value.reset(FORM_STRUCTURE)
+    alert.fire.success({
+      text: 'Eliminado correctamente',
+    })
     await getAll()
   } catch ({ message }) {
     if (typeof message === 'object' ) {
       form.value.setErrors(message)
     }else{
-      message?.ticket && alert(message.ticket)
+      message?.ticket && alert.fire.error({
+        text: message.ticket,
+      })
     }
   }
 }

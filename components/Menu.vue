@@ -12,9 +12,6 @@
 const router = useRouter()
 const route = useRoute()
 
-console.log('route', route)
-console.log('router', router)
-
 const items = [
   {
     text: 'Inicio',
