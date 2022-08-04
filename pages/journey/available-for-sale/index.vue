@@ -83,7 +83,11 @@ const locationStore = useLocationStore()
 const { listAllToObject: locationListAllToObject } = storeToRefs(locationStore)
 const { getListAll: locationGetListAll } = locationStore
 
-await locationGetListAll()
+try{
+  await locationGetListAll()
+} catch (error) {
+  console.log(error)
+}
 
 const router = useRouter()
 

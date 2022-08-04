@@ -86,7 +86,7 @@ export const useLocationStore = defineStore(
                 return Promise.resolve(locations)
             }).catch(({ data }) => {
                 list.isLoading = false
-                return Promise.reject(JSON.parse(data.message))
+                return Promise.reject(JSON.parse(data?.message || '{}'))
             })
         }
         async function getListAll() {
@@ -104,7 +104,7 @@ export const useLocationStore = defineStore(
                 return Promise.resolve(locations)
             }).catch(({ data }) => {
                 listAll.isLoading = false
-                return Promise.reject(JSON.parse(data.message))
+                return {}
             })
         }
         const listAllToObject = computed(() => {
@@ -140,7 +140,7 @@ export const useLocationStore = defineStore(
                     return message || ''
                 }).catch(({ data }) => {
                     createStatus.isLoading = false
-                    return Promise.reject(JSON.parse(data.message))
+                    return Promise.reject(JSON.parse(data?.message || '{}'))
                 })
             }
             return $fetch('/api/location/create', {
@@ -153,7 +153,7 @@ export const useLocationStore = defineStore(
                 return message || ''
             }).catch(({ data }) => {
                 createStatus.isLoading = false
-                return Promise.reject(JSON.parse(data.message))
+                return Promise.reject(JSON.parse(data?.message || '{}'))
             })
         }
 
@@ -171,7 +171,7 @@ export const useLocationStore = defineStore(
                 return message || ''
             }).catch(({ data }) => {
                 createStatus.isLoading = false
-                return Promise.reject(JSON.parse(data.message))
+                return Promise.reject(JSON.parse(data?.message || '{}'))
             })
         }
 
