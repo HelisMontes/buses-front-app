@@ -21,7 +21,6 @@ export default {
                 },
             )
         }catch({ data }){
-            // console.log('post', data)
             return Promise.reject(JSON.stringify({
                 message: data.message,
             }))
