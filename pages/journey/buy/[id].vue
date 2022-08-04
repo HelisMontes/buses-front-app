@@ -1,21 +1,23 @@
 <template>
-  <div>
+  <div class="container__pages wrapper">
     <h1>Journey page</h1>
-    <br />
-    Journey id: {{ stateToBuy.data.id }}
-    <br />
-
-    <Form
-      name="toBuy"
-
-      :structure="FORM_STRUCTURE"
-
-      @submit="submit"
-      submit-text="Comprar"
-
-      ref="form"
-    />
-    <br/>
+    <div class="journey__buy">
+      <h2>
+        Journey id: {{ stateToBuy.data.id }}
+      </h2>
+    </div>
+      <div class="container__form">
+        <Form
+          name="toBuy"
+    
+          :structure="FORM_STRUCTURE"
+    
+          @submit="submit"
+          submit-text="Comprar"
+    
+          ref="form"
+        />
+      </div>
   </div>
 </template>
 
