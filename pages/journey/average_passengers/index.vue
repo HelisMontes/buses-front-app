@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container__pages wrapper">
     <h1>Promedio de pasajeros</h1>
     <br />
     <br />
