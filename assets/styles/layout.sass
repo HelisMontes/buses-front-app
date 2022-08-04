@@ -1,0 +1,61 @@
+body
+  box-sizing: border-box
+  margin: 0
+  padding: 0
+  background-color: #FEFDFA
+
+#__nuxt
+  display: flex
+  flex-direction: column
+  justify-content: space-between
+  min-height: 100vh
+
+.container__header
+  align-items: center
+  background-color: $green
+  display: flex
+  height: 60px
+  justify-content: space-between
+  padding: 0px 20px
+  .logo
+    span
+      font-family: $font-logo
+      text-transform: uppercase
+.logo
+  color: $white
+  font-style: italic
+  font-weight: 600
+
+.container__hero
+  position: relative
+  img
+    aspect-ratio: 16 / 4
+    object-fit: cover
+    width: 100%
+  h1
+    color: $white
+    font-size: $title-h1
+    left: 50%
+    position: absolute
+    top: 20%
+    transform: translateX(-50%)
+    
+h1, h2, h3, h4, p, span, label
+  font-family: $font-logo
+
+footer
+  background-color: $green
+  color: $white
+  margin-top: auto
+  padding: 15px 20px
+  text-align: center
+
+.wrapper
+  max-width: 1440px
+  padding: 50px 100px
+  min-height: 90vh
+.row
+  display: flex
+  flex-direction: row-reverse
+  justify-content: space-between
+  padding: 50px 0
