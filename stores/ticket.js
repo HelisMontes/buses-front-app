@@ -72,7 +72,7 @@ export const useTicketStore = defineStore(
                 return tickets
             }).catch(({ data }) => {
                 list.isLoading = false
-                return Promise.reject(JSON.parse(data.message))
+                return Promise.reject(JSON.parse(data?.message || '{}'))
             })
         }
         async function updatePerPage(per_page) {
@@ -98,7 +98,7 @@ export const useTicketStore = defineStore(
                     return message || ''
                 }).catch(({ data }) => {
                     createStatus.isLoading = false
-                    return Promise.reject(JSON.parse(data.message))
+                    return Promise.reject(JSON.parse(data?.message || '{}'))
                 })
             }
             return $fetch(`/api/${model}/create`, {
@@ -111,7 +111,7 @@ export const useTicketStore = defineStore(
                 return message || ''
             }).catch(({ data }) => {
                 createStatus.isLoading = false
-                return Promise.reject(JSON.parse(data.message))
+                return Promise.reject(JSON.parse(data?.message || '{}'))
             })
         }
 
@@ -129,7 +129,7 @@ export const useTicketStore = defineStore(
                 return message || ''
             }).catch(({ data }) => {
                 createStatus.isLoading = false
-                return Promise.reject(JSON.parse(data.message))
+                return Promise.reject(JSON.parse(data?.message || '{}'))
             })
         }
 

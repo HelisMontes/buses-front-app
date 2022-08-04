@@ -40,13 +40,21 @@ const {
   id,
 } = useRoute().params
 
-await userGetListAll({
-  filter: {
-    filter_by: 'type_user',
-    filter_value: 'PASS',
-  }
-})
-await getToBuy({ id })
+try{
+  await userGetListAll({
+    filter: {
+      filter_by: 'type_user',
+      filter_value: 'PASS',
+    }
+  })
+} catch (error) {
+  console.log(error)
+}
+try{
+  await getToBuy({ id })
+} catch (error) {
+  console.log(error)
+}
 
 const FORM_STRUCTURE = {
   number_seat: {

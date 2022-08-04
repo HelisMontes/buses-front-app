@@ -79,13 +79,21 @@ const userStore = useUserStore()
 const { listAllToObject: userListAllToObject } = storeToRefs(userStore)
 const { getListAll: userGetListAll } = userStore
 
-await journeyGetListAll()
-await userGetListAll({
-  filter: {
-    filter_by: 'type_user',
-    filter_value: 'PASS',
-  }
-})
+try{
+  await journeyGetListAll()
+} catch (error) {
+  console.log(error)
+}
+try{
+  await userGetListAll({
+    filter: {
+      filter_by: 'type_user',
+      filter_value: 'PASS',
+    }
+  })
+} catch (error) {
+  console.log(error)
+}
 
 const FORM_STRUCTURE = {
   user_id: {

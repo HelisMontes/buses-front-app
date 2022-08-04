@@ -108,7 +108,7 @@ export const useUserStore = defineStore(
                 return Promise.resolve(users)
             }).catch(({ data }) => {
                 createStatus.isLoading = false
-                return Promise.reject(JSON.parse(data.message))
+                return {}
             })
         }
         async function getListAll({ filter = {} }) {
@@ -130,7 +130,7 @@ export const useUserStore = defineStore(
                 return Promise.resolve(users)
             }).catch(({ data }) => {
                 listAll.isLoading = false
-                return Promise.reject(JSON.parse(data.message))
+                return Promise.reject(JSON.parse(data?.message || '{}'))
             })
         }
         const listAllToObject = computed(() => {
@@ -167,7 +167,7 @@ export const useUserStore = defineStore(
                     return message || ''
                 }).catch(({ data }) => {
                     createStatus.isLoading = false
-                    return Promise.reject(JSON.parse(data.message))
+                    return Promise.reject(JSON.parse(data?.message || '{}'))
                 })
             }
             return $fetch('/api/user/create', {
@@ -180,7 +180,7 @@ export const useUserStore = defineStore(
                 return message || ''
             }).catch(({ data }) => {
                 createStatus.isLoading = false
-                return Promise.reject(JSON.parse(data.message))
+                return Promise.reject(JSON.parse(data?.message || '{}'))
             })
         }
 
@@ -198,7 +198,7 @@ export const useUserStore = defineStore(
                 return message || ''
             }).catch(({ data }) => {
                 createStatus.isLoading = false
-                return Promise.reject(JSON.parse(data.message))
+                return Promise.reject(JSON.parse(data?.message || '{}'))
             })
         }
 
