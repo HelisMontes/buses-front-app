@@ -63,10 +63,7 @@ import { useUserStore } from '@/stores/user'
 import TableCustom from '~/components/TableCustom.vue'
 import Image from '~/components/Image.vue'
 import Form from '~/components/Form.vue'
-import alerts from '~/utils/alerts'
 
-
-const alert = alerts()
 const userStore = useUserStore()
 const { list, createStatus } = storeToRefs(userStore)
 const { getAll, updatePerPage, updatePage, save } = userStore

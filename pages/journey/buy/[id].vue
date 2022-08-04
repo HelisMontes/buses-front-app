@@ -1,23 +1,21 @@
 <template>
-  <div class="container__pages wrapper">
+  <div>
     <h1>Journey page</h1>
-    <div class="journey__buy">
-      <h2>
-        Journey id: {{ stateToBuy.data.id }}
-      </h2>
-    </div>
-      <div class="container__form">
-        <Form
-          name="toBuy"
-    
-          :structure="FORM_STRUCTURE"
-    
-          @submit="submit"
-          submit-text="Comprar"
-    
-          ref="form"
-        />
-      </div>
+    <br />
+    Journey id: {{ stateToBuy.data.id }}
+    <br />
+
+    <Form
+      name="toBuy"
+
+      :structure="FORM_STRUCTURE"
+
+      @submit="submit"
+      submit-text="Comprar"
+
+      ref="form"
+    />
+    <br/>
   </div>
 </template>
 
@@ -29,9 +27,7 @@ import Image from '~/components/Image.vue'
 
 import { useJourneyStore } from '@/stores/journey'
 import { useUserStore } from '@/stores/user'
-import alerts from '~/utils/alerts'
 
-const alert = alerts()
 const journeyStore = useJourneyStore()
 const { stateToBuy } = storeToRefs(journeyStore)
 const { getToBuy, ticketCreate } = journeyStore

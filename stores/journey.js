@@ -426,8 +426,9 @@ export const useJourneyStore = defineStore(
             },
             COLUMNS: [
                 {
-                    label: 'Promedio de tiempo de viaje (en horas)',
+                    label: 'Promedio de tiempo de viaje (en segundos)',
                     field: 'range',
+                    type: 'callback',
                 },
                 {
                     label: 'Viaje',
