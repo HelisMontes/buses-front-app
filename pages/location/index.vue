@@ -1,5 +1,5 @@
 <template>
-  <div class="location wrapper">
+  <div class="container__pages wrapper">
     <h1>Location</h1>
     <div class="row">
       <div class="container__table">
