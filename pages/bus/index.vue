@@ -61,10 +61,14 @@ import TableCustom from '~/components/TableCustom.vue'
 import Image from '~/components/Image.vue'
 import Form from '~/components/Form.vue'
 
+import alerts from '~/utils/alerts'
+
 const busStore = useBusStore()
 const { list, createStatus } = storeToRefs(busStore)
 const { getAll, updatePerPage, updatePage, save } = busStore
 const { COLUMNS } = busStore.list
+
+const alert = alerts()
 
 const FORM_STRUCTURE = {
   brand: {
@@ -159,12 +163,17 @@ const submit = async (values) => {
   try {
     await save(values)
     form.value.reset(FORM_STRUCTURE)
+    alert.fire.success({
+      text: 'Guardado correctamente',
+    })
     await getAll()
   } catch ({ message }) {
     if (typeof message === 'object' ) {
       form.value.setErrors(message)
     }else{
-      message?.bus && alert(message.bus)
+      message?.bus && alert.fire.error({
+        text: message.bus,
+      })
     }
   }
 }
@@ -177,12 +186,17 @@ const deleteItem = async (row) => {
       id: row.id,
     })
     form.value.reset(FORM_STRUCTURE)
+    alert.fire.success({
+      text: 'Eliminado correctamente',
+    })
     await getAll()
   } catch ({ message }) {
     if (typeof message === 'object' ) {
       form.value.setErrors(message)
     }else{
-      message?.bus && alert(message.bus)
+      message?.bus && alert.fire.error({
+        text: message.bus,
+      })
     }
   }
 }

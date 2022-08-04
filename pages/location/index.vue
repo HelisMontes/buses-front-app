@@ -115,12 +115,17 @@ const submit = async (values) => {
   try {
     await save(values)
     form.value.reset(FORM_STRUCTURE)
+    alert.fire.success({
+      text: 'Guardado correctamente',
+    })
     await getAll()
   } catch ({ message }) {
     if (typeof message === 'object' ) {
       form.value.setErrors(message)
     }else{
-      message?.location && alert(message.location)
+      message?.location && alert.fire.error({
+        text: message.location,
+      })
     }
   }
 }
@@ -133,12 +138,17 @@ const deleteItem = async (row) => {
       id: row.id,
     })
     form.value.reset(FORM_STRUCTURE)
+    alert.fire.success({
+      text: 'Eliminado correctamente',
+    })
     await getAll()
   } catch ({ message }) {
     if (typeof message === 'object' ) {
       form.value.setErrors(message)
     }else{
-      message?.location && alert(message.location)
+      message?.location && alert.fire.error({
+        text: message.location,
+      })
     }
   }
 }

@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NUXT_API_BASE_URL || 'http://localhost:3000'
+const API_BASE_URL = process.env.NUXT_API_BASE_URL || 'http://localhost:8000'
 
 
 export default {
@@ -12,7 +12,6 @@ export default {
         }
     },
     post: async (url, body = {}) => {
-        const API_BASE_URL = process.env.NUXT_API_BASE_URL || 'http://localhost:3000'
         try {
             return await $fetch(
                 API_BASE_URL + url,
@@ -22,7 +21,6 @@ export default {
                 },
             )
         }catch({ data }){
-            // console.log('post', data)
             return Promise.reject(JSON.stringify({
                 message: data.message,
             }))
