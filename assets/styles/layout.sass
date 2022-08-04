@@ -2,6 +2,7 @@ body
   box-sizing: border-box
   margin: 0
   padding: 0
+  background-color: #FEFDFA
 
 #__nuxt
   display: flex
@@ -11,15 +12,19 @@ body
 
 .container__header
   align-items: center
-  background-color: $purple
+  background-color: $green
   display: flex
   height: 60px
   justify-content: space-between
-  padding: 10px 20px
+  padding: 0px 20px
   .logo
     span
       font-family: $font-logo
       text-transform: uppercase
+.logo
+  color: $white
+  font-style: italic
+  font-weight: 600
 
 .container__hero
   position: relative
@@ -36,8 +41,18 @@ body
     transform: translateX(-50%)
 
 footer
-  background-color: $purple-dark
+  background-color: $green
   color: $white
   margin-top: auto
   padding: 15px 20px
   text-align: center
+
+.wrapper
+  max-width: 1440px
+  padding: 50px 100px
+  min-height: 90vh
+.row
+  display: flex
+  flex-direction: row-reverse
+  justify-content: space-between
+  padding: 50px 0

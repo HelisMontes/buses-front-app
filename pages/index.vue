@@ -9,7 +9,7 @@
         <h1>Te ayudamos a viajar tranquil@ :)</h1>
       </div>
     </div>
-    <div class="container__iformation">
+    <div class="container__information">
       <h2>DATOS SOBRE BUSTACAME</h2>
       <div class="list__items">
         <div class="item">

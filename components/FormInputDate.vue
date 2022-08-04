@@ -12,8 +12,10 @@
       forms[store].isValidated
     "
   >
-    <div>
-      {{ forms[store].structure[field].errors }}
+    <div class="message-error">
+      <span v-for="(error, key) in forms[store].structure[field].errors" :key="key">
+        {{ error }}
+      </span>
     </div>
   </template>
 </template>

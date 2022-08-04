@@ -14,10 +14,7 @@
       v-for="(item, index) in formItems"
       :key="index"
     >
-      <br/>
-      <br/>
-      
-      <component
+    <component
         v-if="item.component"
         :is="callComponent[item.component]({
           store: name,
@@ -25,7 +22,7 @@
         })"
       />
     </template>
-    <br/>
+
     <Button
       :text="submitText"
       @click="submit"
