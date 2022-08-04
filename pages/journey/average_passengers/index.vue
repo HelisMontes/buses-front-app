@@ -10,7 +10,16 @@
       @update-data="getAll"
       @update-per-page="listUpdatePerPage"
       @update-page="listUpdatePage"
-    />
+    >
+      <template v-slot:callback="{ data, field }">
+        <template v-if="field === 'range'">
+          {{ data ? (data / 60 / 60) : '-' }}
+        </template>
+        <template v-else>
+          {{ data }}
+        </template>
+      </template>
+    </TableCustom>
   </div>
 </template>
 

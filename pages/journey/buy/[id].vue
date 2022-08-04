@@ -83,13 +83,17 @@ const form = ref();
 const submit = async (values) => {
   try {
     await ticketCreate(values)
-    alert('Compra realizada exitosamente')
+    alert.fire.success({
+      text: 'Compra realizada exitosamente',
+    })
     window.location.reload()
   } catch ({ message }) {
     if (typeof message === 'object' ) {
       form.value.setErrors(message)
     }else{
-      message?.journey && alert(message.journey)
+      message?.journey && alert.fire.error({
+        text: message.journey,
+      })
     }
   }
 }

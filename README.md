@@ -1,42 +1,26 @@
-# Nuxt 3 Minimal Starter
+# Entorno donde fue desarrollado:
 
-Look at the [nuxt 3 documentation](https://v3.nuxtjs.org) to learn more.
+- OS: Ubuntu 20.04 LTS
+- Nodejs: v16.16.0
 
-## Setup
-
-Make sure to install the dependencies:
+# Instalación:
 
 ```bash
-# yarn
-yarn install
-
-# npm
 npm install
-
-# pnpm
-pnpm install --shamefully-hoist
 ```
 
-## Development Server
-
-Start the development server on http://localhost:3000
+# Ejecución:
 
 ```bash
 npm run dev
 ```
 
-## Production
-
-Build the application for production:
-
-```bash
-npm run build
-```
-
-Locally preview production build:
+## NOTA:
+Si llegase a haber algun problema con la version de nodejs, usar el comando:
 
 ```bash
-npm run preview
+nvm use
 ```
 
-Checkout the [deployment documentation](https://v3.nuxtjs.org/guide/deploy/presets) for more information.
+Se debe copiar el archivo ".env.example" a ".env" y modificar los valores de las variables.
+Para este caso solo se necesita indicar donde esta ubicado el backend, la var es "NUXT_API_BASE_URL".
