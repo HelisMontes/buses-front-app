@@ -27,7 +27,9 @@ import Image from '~/components/Image.vue'
 
 import { useJourneyStore } from '@/stores/journey'
 import { useUserStore } from '@/stores/user'
+import alerts from '~/utils/alerts'
 
+const alert = alerts()
 const journeyStore = useJourneyStore()
 const { stateToBuy } = storeToRefs(journeyStore)
 const { getToBuy, ticketCreate } = journeyStore
@@ -83,13 +85,17 @@ const form = ref();
 const submit = async (values) => {
   try {
     await ticketCreate(values)
-    alert('Compra realizada exitosamente')
+    alert.fire.success({
+      text: 'Compra realizada exitosamente',
+    })
     window.location.reload()
   } catch ({ message }) {
     if (typeof message === 'object' ) {
       form.value.setErrors(message)
     }else{
-      message?.journey && alert(message.journey)
+      message?.journey && alert.fire.error({
+        text: message.journey,
+      })
     }
   }
 }
