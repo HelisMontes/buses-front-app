@@ -76,9 +76,7 @@ import { useJourneyStore } from '@/stores/journey'
 import { useBusStore } from '@/stores/bus'
 import { useLocationStore } from '@/stores/location'
 import { useUserStore } from '@/stores/user'
-import alerts from '~/utils/alerts'
 
-const alert = alerts()
 const journeyStore = useJourneyStore()
 const { list, createStatus } = storeToRefs(journeyStore)
 const { getAll, updatePerPage, updatePage, save } = journeyStore

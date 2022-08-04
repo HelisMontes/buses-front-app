@@ -1,22 +1,18 @@
 <template>
-  <h3>
-    {{ label }}
-    {{ valueToShow }}
-  </h3>
-  <div class="container__car-seat">
-    <div v-for="(option, index) in optionsFree" :key="index">
-      <div
-        v-if="option"
-        :class="['seat', 'seat-occupied']"
-      >
-        <img src="/assets/img/car-seat.svg" alt="car-seat">
-      </div>
-      <div
-        v-else @click="updateValue(index)"
-        :class="['seat', (valueToShow === index ? 'seat-selected' : 'seat-free')]"
-      >
-        <img src="/assets/img/car-seat.svg" alt="car-seat">
-      </div>
+  {{ label }}
+  {{ valueToShow }}
+  <div v-for="(option, index) in optionsFree" :key="index">
+    <div
+      v-if="option"
+      :class="['seat', 'seat-occupied']"
+    >
+      Ocupado
+    </div>
+    <div
+      v-else @click="updateValue(index)"
+      :class="['seat', (valueToShow === index ? 'seat-selected' : 'seat-free')]"
+    >
+      Libre
     </div>
   </div>
   <template

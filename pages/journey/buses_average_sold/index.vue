@@ -1,56 +1,51 @@
 <template>
-  <div class="container__pages wrapper">
+  <div>
     <h1>Buses porcentaje de tickets vendidos </h1>
-    <div class="row__report">
-      <div class="container__table">
-        <TableCustom
-          :data="busesAverageSoldList.data || []"
-          :meta="busesAverageSoldList.meta || {}"
-          :columns="COLUMNS"
-          @update-data="busesAverageSoldGetAll"
-          @update-per-page="busesAverageSoldListUpdatePerPage"
-          @update-page="busesAverageSoldListUpdatePage"
-        >
-          <template v-slot:callback="{ data, field, row }">
-            <template v-if="field === 'status'">
-              <span v-if="data">Activo</span>
-              <span v-else>Inactivo</span>
-            </template>
-            <template v-else-if="field === 'image'">
-              <Image
-                :src="data"
-                alt="bus"
-              />
-            </template>
-            <template v-else-if="field === 'actions'">
-              <Button
-                text="Editar"
-                @click="edit(row)"
-              />
-              <Button
-                text="Eliminar"
-                @click="deleteItem(row)"
-              />
-            </template>
-            <template v-else>
-              {{ data }}
-            </template>
-          </template>
-        </TableCustom>
-      </div>
-    <div class="container__form">
-      <Form
-        name="busesAverageSold"
+    <br />
+    <br />
+    <TableCustom
+      :data="busesAverageSoldList.data || []"
+      :meta="busesAverageSoldList.meta || {}"
+      :columns="COLUMNS"
+      @update-data="busesAverageSoldGetAll"
+      @update-per-page="busesAverageSoldListUpdatePerPage"
+      @update-page="busesAverageSoldListUpdatePage"
+    >
+      <template v-slot:callback="{ data, field, row }">
+        <template v-if="field === 'status'">
+          <span v-if="data">Activo</span>
+          <span v-else>Inactivo</span>
+        </template>
+        <template v-else-if="field === 'image'">
+          <Image
+            :src="data"
+            alt="bus"
+          />
+        </template>
+        <template v-else-if="field === 'actions'">
+          <Button
+            text="Editar"
+            @click="edit(row)"
+          />
+          <Button
+            text="Eliminar"
+            @click="deleteItem(row)"
+          />
+        </template>
+        <template v-else>
+          {{ data }}
+        </template>
+      </template>
+    </TableCustom>
+    <Form
+      name="busesAverageSold"
 
-        :structure="FORM_STRUCTURE"
+      :structure="FORM_STRUCTURE"
 
-        @submit="submit"
-        submit-text="Buscar"
+      @submit="submit"
 
-        ref="form"
-      />
-    </div>
-   </div>
+      ref="form"
+    />
   </div>
 </template>
 
@@ -73,8 +68,11 @@ const {
 } = journeyStore
 const { COLUMNS } = journeyStore.busesAverageSoldList
 
-
-await journeyGetListAll()
+try{
+  await journeyGetListAll()
+} catch (error) {
+  console.log(error)
+}
 
 const FORM_STRUCTURE = {
   average_sold: {
