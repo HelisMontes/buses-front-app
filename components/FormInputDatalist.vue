@@ -1,31 +1,35 @@
 <template>
-  {{ label }}
-  <input
-    :list="store + '-' + field"
-    :value="valueToShow"
-    @change="updateValue($event.target.value)"
-  >
-  <button
-    @click.stop.prevent="updateValue('')"
-  >
-    X
-  </button>
-  <datalist :id="store + '-' + field">
-    <option v-for="(option, key) in options" :key="key" :value="option.label">{{ option?.description }}</option>
-  </datalist>
-  <template
-    v-if="
-      forms[store].structure[field].errors.length &&
-      forms[store].structure[field].errors[0] &&
-      forms[store].isValidated
-    "
-  >
-    <div class="message-error">
-      <span v-for="(error, key) in forms[store].structure[field].errors" :key="key">
-        {{ error }}
-      </span>
+  <div class="form-group">
+    <label :for="`label-${label}`">{{ label }}</label>
+    <div class="group__input">
+      <input
+        :list="store + '-' + field"
+        :value="valueToShow"
+        @change="updateValue($event.target.value)"
+      >
+      <button
+        @click.stop.prevent="updateValue('')"
+      >
+        X
+      </button>
     </div>
-  </template>
+    <datalist :id="store + '-' + field">
+      <option v-for="(option, key) in options" :key="key" :value="option.label">{{ option?.description }}</option>
+    </datalist>
+    <template
+      v-if="
+        forms[store].structure[field].errors.length &&
+        forms[store].structure[field].errors[0] &&
+        forms[store].isValidated
+      "
+    >
+      <div class="message-error">
+        <span v-for="(error, key) in forms[store].structure[field].errors" :key="key">
+          {{ error }}
+        </span>
+      </div>
+    </template>
+  </div>
 </template>
 
 <script setup>

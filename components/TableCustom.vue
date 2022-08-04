@@ -9,39 +9,41 @@
       <option value="100">100</option>
     </select>
   </div>
-  <table>
-    <thead>
-      <tr>
-        <th v-for="column in columns" :key="column.field">
-          {{ column.label }}
-        </th>
-      </tr>
-    </thead>
-    <tbody v-if="data">
-      <tr v-for="row of data" :key="row.id">
-        <td v-for="column in columns" :key="column.field">
-          <div v-if="column.type === 'callback'">
-            <slot
-              name="callback"
-              :data="row?.[column.field]"
-              :field="column.field"
-              :row="row"
-            />
-          </div>
-          <div v-else>
-            {{ row[column.field] }}
-          </div>
-        </td>
-      </tr>
-    </tbody>
-    <tfoot>
-      <tr>
-        <th v-for="column in columns" :key="column.field">
-          {{ column.label }}
-        </th>
-      </tr>
-    </tfoot>
-  </table>
+  <div class="table">
+    <table>
+      <thead>
+        <tr>
+          <th v-for="column in columns" :key="column.field">
+            {{ column.label }}
+          </th>
+        </tr>
+      </thead>
+      <tbody v-if="data">
+        <tr v-for="row of data" :key="row.id">
+          <td v-for="column in columns" :key="column.field">
+            <div v-if="column.type === 'callback'">
+              <slot
+                name="callback"
+                :data="row?.[column.field]"
+                :field="column.field"
+                :row="row"
+              />
+            </div>
+            <div v-else>
+              {{ row[column.field] }}
+            </div>
+          </td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <th v-for="column in columns" :key="column.field">
+            {{ column.label }}
+          </th>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
   <Pagination :page="meta.page" :lastPage="meta.last_page" @update="$emit('updatePage' , $event)" />
 </template>
 
