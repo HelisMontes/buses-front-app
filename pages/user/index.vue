@@ -1,54 +1,58 @@
 <template>
-  <div>
-    <h1>User page</h1>
-    <br />
-    <br />
-    <TableCustom
-      :data="list.data || []"
-      :meta="list.meta || {}"
-      :columns="COLUMNS"
-      @update-data="getAll"
-      @update-per-page="updatePerPage"
-      @update-page="updatePage"
-    >
-      <template v-slot:callback="{ data, field, row }">
-        <template v-if="field === 'status'">
-          <span v-if="data">Activo</span>
-          <span v-else>Inactivo</span>
-        </template>
-        <template v-else-if="field === 'image'">
-          <Image
-            :src="data"
-            alt="user"
-          />
-        </template>
-        <template v-else-if="field === 'actions'">
-          <Button
-            text="Editar"
-            @click="edit(row)"
-          />
-          <Button
-            text="Eliminar"
-            @click="deleteItem(row)"
-          />
-        </template>
-        <template v-else-if="field === 'type_user'">
-          {{ TYPE_USER[data] || '-' }}
-        </template>
-        <template v-else>
-          {{ data }}
-        </template>
-      </template>
-    </TableCustom>
-    <Form
-      name="user"
+  <div class="container__pages wrapper">
+    <h1>User</h1>
+    <div class="row">
+      <div class="container__table">
+        <TableCustom
+          :data="list.data || []"
+          :meta="list.meta || {}"
+          :columns="COLUMNS"
+          @update-data="getAll"
+          @update-per-page="updatePerPage"
+          @update-page="updatePage"
+        >
+          <template v-slot:callback="{ data, field, row }">
+            <template v-if="field === 'status'">
+              <span v-if="data">Activo</span>
+              <span v-else>Inactivo</span>
+            </template>
+            <template v-else-if="field === 'image'">
+              <Image
+                :src="data"
+                alt="user"
+              />
+            </template>
+            <template v-else-if="field === 'actions'">
+              <Button
+                text="Editar"
+                @click="edit(row)"
+              />
+              <Button
+                text="Eliminar"
+                @click="deleteItem(row)"
+              />
+            </template>
+            <template v-else-if="field === 'type_user'">
+              {{ TYPE_USER[data] || '-' }}
+            </template>
+            <template v-else>
+              {{ data }}
+            </template>
+          </template>
+        </TableCustom>
+      </div>
+      <div class="container__form">
+        <Form
+          name="user"
 
-      :structure="FORM_STRUCTURE"
+          :structure="FORM_STRUCTURE"
 
-      @submit="submit"
+          @submit="submit"
 
-      ref="form"
-    />
+          ref="form"
+        />
+      </div>
+    </div>
   </div>
 </template>
 

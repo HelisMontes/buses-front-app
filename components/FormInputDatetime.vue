@@ -1,10 +1,11 @@
 <template>
-  {{ label }}
-  <input
-    type="datetime-local"
-    @change="updateValue($event.target.value)"
-    ref="input"
-  />
+  <div class="form-group">
+    <label :for="`label-${label}`">{{ label }}</label>
+      <input
+        type="datetime-local"
+        @change="updateValue($event.target.value)"
+        ref="input"
+      />
   <template
     v-if="
       forms[store].structure[field].errors.length &&
@@ -12,12 +13,13 @@
       forms[store].isValidated
     "
   >
-    <div class="message-error">
-      <span v-for="(error, key) in forms[store].structure[field].errors" :key="key">
-        {{ error }}
-      </span>
-    </div>
-  </template>
+      <div class="message-error">
+        <span v-for="(error, key) in forms[store].structure[field].errors" :key="key">
+          {{ error }}
+        </span>
+      </div>
+    </template>
+  </div>
 </template>
 
 <script setup>
