@@ -1,61 +1,64 @@
 <template>
-  <div>
-    <h1>Journey page</h1>
-    <br />
-    <Form
-      name="journey-available-for-sale"
-
-      :structure="FORM_STRUCTURE"
-
-      @submit="submit"
-      submit-text="Buscar"
-
-      ref="form"
-    />
-    <br/>
-    <br />
-    <TableCustom
-      :data="list.data || []"
-      :meta="list.meta || {}"
-      :columns="COLUMNS"
-      @update-data="getAll"
-      @update-per-page="updatePerPage"
-      @update-page="updatePage"
-    >
-      <template v-slot:callback="{ data, field, row }">
-        <template v-if="field === 'status'">
-          <span v-if="data">Activo</span>
-          <span v-else>Inactivo</span>
-        </template>
-        <template v-else-if="field === 'image'">
-          <Image
-            :src="data"
-            alt="journey"
-          />
-        </template>
-        <template v-else-if="field === 'actions'">
-          <Button
-            text="Comprar"
-            @click="toBuy(row)"
-          />
-        </template>
-        <template v-else-if="field === 'origen'">
-          {{ data.country }} - {{ data.city }}
-        </template>
-        <template v-else-if="field === 'destination'">
-          {{ data.country }} - {{ data.city }}
-        </template>
-        <template v-else-if="field === 'bus'">
-          {{ data.plate }} - {{ data.brand }} - {{ data.model }}
-        </template>
-        <template v-else-if="field === 'user'">
-          {{ data.identification }} - {{ data.name }} {{ data.last_name }}
-        </template>
-        <template v-else>
-          {{ data }}
-        </template>
-      </template>
-    </TableCustom>
+  <div class="container__pages wrapper">
+    <h1>Disponibles para la venta</h1>
+    <div class="row__report">
+      <div class="container__table">
+        <TableCustom
+          :data="list.data || []"
+          :meta="list.meta || {}"
+          :columns="COLUMNS"
+          @update-data="getAll"
+          @update-per-page="updatePerPage"
+          @update-page="updatePage"
+        >
+          <template v-slot:callback="{ data, field, row }">
+            <template v-if="field === 'status'">
+              <span v-if="data">Activo</span>
+              <span v-else>Inactivo</span>
+            </template>
+            <template v-else-if="field === 'image'">
+              <Image
+                :src="data"
+                alt="journey"
+              />
+            </template>
+            <template v-else-if="field === 'actions'">
+              <Button
+                text="Comprar"
+                @click="toBuy(row)"
+              />
+            </template>
+            <template v-else-if="field === 'origen'">
+              {{ data.country }} - {{ data.city }}
+            </template>
+            <template v-else-if="field === 'destination'">
+              {{ data.country }} - {{ data.city }}
+            </template>
+            <template v-else-if="field === 'bus'">
+              {{ data.plate }} - {{ data.brand }} - {{ data.model }}
+            </template>
+            <template v-else-if="field === 'user'">
+              {{ data.identification }} - {{ data.name }} {{ data.last_name }}
+            </template>
+            <template v-else>
+              {{ data }}
+            </template>
+          </template>
+        </TableCustom>
+      </div>
+      <div class="container__form">
+        <Form
+          name="journey-available-for-sale"
+    
+          :structure="FORM_STRUCTURE"
+    
+          @submit="submit"
+          submit-text="Buscar"
+    
+          ref="form"
+        />
+      </div>
+    </div>
   </div>
 </template>
 

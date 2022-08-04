@@ -60,7 +60,9 @@ import { useLocationStore } from '@/stores/location'
 import TableCustom from '~/components/TableCustom.vue'
 import Image from '~/components/Image.vue'
 import Form from '~/components/Form.vue'
+import alerts from '~/utils/alerts'
 
+const alert = alerts()
 const locationStore = useLocationStore()
 const { list, createStatus } = storeToRefs(locationStore)
 const { getAll, updatePerPage, updatePage, save } = locationStore
